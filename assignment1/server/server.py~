@@ -1,0 +1,13 @@
+import sys
+from socket import socket, AF_INET, SOCK_STREAM
+#should be started with a port number
+
+while 1:
+    s = socket(AF_INET, SOCK_STREAM)
+    s.bind(('127.0.0.1', int(sys.argv[1])))
+    s.listen(5)
+    
+    while True:
+        sock, addr = s.accept()
+        print "Connected to", addr
+        print sock
