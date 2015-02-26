@@ -1,5 +1,6 @@
 import sys
 import socket
+import threading
 #sys.argv is filename, arg1, .... , argn
 #sys.argv should be User ID/ServerIP/Server port
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -28,9 +29,22 @@ while choice[0] != 'q':
     print "Search Public Profiles (s)\n"
             #search with keyword Regular expressions ho!
                 #recieve results file of len in xml
-    input_string = input('Enter your choice: ')
+    input_string = raw_input('Enter your choice: ')
     choice = input_string[0]
+    if choice == 'r':
+        Register(s, username)
+    elif choice == 'u':
+    elif choice == 'l':
+    elif choice == 'q':
+    elif choice == 'f':
+    elif choice == 'c':
+    elif choice == 'j':
+    elif choice == 'h':
+    elif choice == 'p':
+    elif choice == 'e':
+    elif choice == 's':
     
 def Register(s, username):
-    s.sendall("register", username)
-    
+    s.sendall("REGISTER", username)
+    for i in range(2):
+        

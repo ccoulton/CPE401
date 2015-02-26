@@ -1,14 +1,41 @@
 import sys
 import socket
 import string
+import time
+import datetime
 
-#user class 
+class userClass:
     #tuple username first name last name
-    #list of friends
-    #bool online status
-    #tuple of current address
-    #xml profile page
+    def __init__(self, userName):
+        self._userName = userName
+        self._online = False
+        self._friends = []
+        self._lastUpdate = time.time()
+        self._lUHR = datetime.datetime.fromtimestamp(self._lastUpdate).strftime('%Y-%m-%d %H:%M:%S')
 
+    def reg(self, fname, lname):
+        self._Names = [fname, lname]
+    
+    #list of friends
+    def addFriend(self, newFriend):
+        self._friends.append(newFriend)
+
+    #bool online status
+    def isOnline(self):
+        return(self._online)
+
+    #tuple of current address
+    def logOn(self, addr):
+        self._online = True
+        self._IP = addr[0]
+        self._port = addr[1]
+    
+    def logOff(self):
+        self._online = False
+        self._IP = NULL
+        self._port = NULL    
+    #xml profile page
+     
 #parse activty log, populate users list, 
 #should be started with a port number
 
@@ -40,3 +67,4 @@ while 1:
             #return results msg w/ file len, in xml
         #if entries get all wall posts since time in reverse order
             #return wall message w/ file len, in xml
+    
