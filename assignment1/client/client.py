@@ -1,8 +1,8 @@
 import sys
-from socket import socket, AF_INET, SOCK_STREAM
+import socket
 #sys.argv is filename, arg1, .... , argn
 #sys.argv should be User ID/ServerIP/Server port
-s = socket(AF_INET, SOCK_STREAM)
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 username = sys.argv[1]
 host = sys.argv[2]
 host_port = int(sys.argv[3])
@@ -13,6 +13,7 @@ choice = 'n'
 while choice[0] != 'q':
     print "What action would you like to take on MaskTome?\n"
     print "Register New user (r)\n"
+            #Register(s, username)
             #send server userid user-name and user-last 
             #retry after 10, and report in error log if all 3 fail
     print "Update public profile(u)\n"
@@ -29,3 +30,7 @@ while choice[0] != 'q':
                 #recieve results file of len in xml
     input_string = input('Enter your choice: ')
     choice = input_string[0]
+    
+def Register(s, username):
+    s.sendall("register", username)
+    

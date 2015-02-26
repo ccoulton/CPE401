@@ -1,15 +1,29 @@
 import sys
-from socket import socket, AF_INET, SOCK_STREAM
+import socket
+import string
+
+#user class 
+    #tuple username first name last name
+    #list of friends
+    #bool online status
+    #tuple of current address
+    #xml profile page
+
+#parse activty log, populate users list, 
 #should be started with a port number
 
 while 1:
-    s = socket(AF_INET, SOCK_STREAM)
-    s.bind(('127.0.0.1', int(sys.argv[1])))
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind(('localhost', int(sys.argv[1])))
     s.listen(5)
     
     while True:
         sock, addr = s.accept()
         print "Connected to", addr
+        data = sock.recv(1024)
+        input_string = string.split(data, ' ', 1)
+        for words in input_string:
+            print words
         #check for what action to take
         #if register add to registry
             #send ACK
