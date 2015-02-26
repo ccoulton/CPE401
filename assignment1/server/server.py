@@ -3,6 +3,7 @@ import socket
 import string
 import time
 import datetime
+import re
 
 class userClass:
     #tuple username first name last name
@@ -35,36 +36,58 @@ class userClass:
         self._IP = NULL
         self._port = NULL    
     #xml profile page
-     
+
+class clientHandler:
+    def __init__(self, socket, address):
+        self._socket = socket
+        self._addr = address
+
+    def run()
+        while 1:
+            data = self._socket.recv(1024)
+            if not data: return
+            else: inputString = string.split(data, ' ', 1)
+            if string.find(inputString[0], "REGISTER"):
+                self.REG(inputString[1])
+            elif string.find(inputString[0], "UPDATE"):
+            elif string.find(inputString[0], "LOGIN"):
+            elif string.find(inputString[0], "QUIT"):
+            elif string.find(inputString[0], "FRIEND"):
+            elif string.find(inputString[0], "CONFIRM"):
+            elif string.find(inputString[0], "REJECT"):
+            elif string.find(inputString[0], "CHAT"):
+            elif string.find(inputString[0], "POST"):
+            elif string.find(inputString[0], "ENTRIES"):
+            elif string.find(inputString[0], "SEARCH"):
 #parse activty log, populate users list, 
 #should be started with a port number
+print "press ctrl +z to quit"
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind(('localhost', int(sys.argv[1])))
+s.listen(5)
 
 while 1:
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind(('localhost', int(sys.argv[1])))
-    s.listen(5)
-    
-    while True:
-        sock, addr = s.accept()
-        print "Connected to", addr
-        data = sock.recv(1024)
-        input_string = string.split(data, ' ', 1)
-        for words in input_string:
-            print words
-        #check for what action to take
-        #if register add to registry
-            #send ACK
-        #if login record address, and port and update user table
-        #if quit check ip matches user and drop from user table
-        #if requesting friendship with user2 
-            #send wall message to user2 asking for friendshop
-        #if reject, do not relay message
-        #if chat user-id mes send message to user-id
-            #if on relay, if off respond offline
-            #once delievered send delievered message
-        #if post wall post to friends and fof or pub can see
-        #if search, use regx to find results in profiles
-            #return results msg w/ file len, in xml
-        #if entries get all wall posts since time in reverse order
-            #return wall message w/ file len, in xml
-    
+    sock, addr = s.accept()
+    print "Connected to", addr
+    ct = clientHandler(sock, addr)
+    client = threading.Thread(None, ct.run())
+    ct.threadName(client.getName())
+    client.run()
+
+    #check for what action to take
+    #if register add to registry
+        #send ACK
+    #if login record address, and port and update user table
+    #if quit check ip matches user and drop from user table
+    #if requesting friendship with user2 
+        #send wall message to user2 asking for friendshop
+    #if reject, do not relay message
+    #if chat user-id mes send message to user-id
+        #if on relay, if off respond offline
+        #once delievered send delievered message
+    #if post wall post to friends and fof or pub can see
+    #if search, use regx to find results in profiles
+        #return results msg w/ file len, in xml
+    #if entries get all wall posts since time in reverse order
+        #return wall message w/ file len, in xml
+
