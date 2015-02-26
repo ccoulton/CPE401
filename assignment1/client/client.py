@@ -1,9 +1,23 @@
 import sys
 import socket
 import threading
+
+def Register(s, username, attempts):
+    if attempts == 0:
+        #write to error file
+        return
+    s.sendall("REGISTER"+username)
+    t = threading.Timer(10.0, Register, args=[s, username, attempts-1])
+    t.start()
+    data = s.recv(1024)
+    if data: 
+        t.cancel()
+        print data
+        return
+        
 #sys.argv is filename, arg1, .... , argn
 #sys.argv should be User ID/ServerIP/Server port
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #from python socket HOWTO
 username = sys.argv[1]
 host = sys.argv[2]
 host_port = int(sys.argv[3])
@@ -32,19 +46,14 @@ while choice[0] != 'q':
     input_string = raw_input('Enter your choice: ')
     choice = input_string[0]
     if choice == 'r':
-        Register(s, username)
-    elif choice == 'u':
-    elif choice == 'l':
-    elif choice == 'q':
-    elif choice == 'f':
-    elif choice == 'c':
-    elif choice == 'j':
-    elif choice == 'h':
-    elif choice == 'p':
-    elif choice == 'e':
-    elif choice == 's':
-    
-def Register(s, username):
-    s.sendall("REGISTER", username)
-    for i in range(2):
-        
+        Register(s, username+raw_input('please enter your first and last name: '), 3)
+    #elif choice == 'u':
+    #elif choice == 'l':
+    #elif choice == 'q':
+    #elif choice == 'f':
+    #elif choice == 'c':
+    #elif choice == 'j':
+    #elif choice == 'h':
+    #elif choice == 'p':
+    #elif choice == 'e':
+    #elif choice == 's':
