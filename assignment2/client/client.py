@@ -11,28 +11,44 @@ def connectTCP():
     TCPsock.connect((host, host_port))
     return(TCPsock)
     
-def connectUDP(udphost, udp_port):
+def connectUDP(udphost, udp_port, address):
     #udp connection
     UDPsock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    UDPsock.bind(('127.0.0.1', 0))
+    UDPsock.bind((address[0], repr(address[1])))
     server = (udphost, udp_port)
     return(UDPsock)
     
+#login function
+def Login(server):
+    string = "LOGIN " + username
+    server.send(string)
+    data = server.recv(1024)
+    print "got msg ", data, "from server"
+    info = data.split(' ') #ack username ip port
+    return([info[2], int(info[3])])
+
+def Quit(server):
+    string = "QUIT " +username
+    server.send(string)
+    server.shutdown(socket.SHUT_WR)
+    data = server.recv(1024)
+    print data
+    server.close()
+    return
+        
 #register function
-def Register():
-    TCP = connectTCP()
+def Register(server):
     input_string = raw_input('Enter your first and last name seperated by space: ')
     firstlast = input_string.split(' ')
     string = "REGISTER " + username + " " + firstlast[0] + " " + firstlast[1]
-    TCP.send(string)
-    data = TCP.recv(1024)
+    server.send(string)
+    data = server.recv(1024)
     print "got msg", data, "from server"
-    TCP.close()
         
 #sys.argv is filename, arg1, .... , argn
 #sys.argv should be User ID/ServerIP/Server port
 choice = 'n'
-
+TCPsock = connectTCP()
 while choice[0] != 'q':
     print "What action would you like to take on MaskTome v2.0?"
     print "Register New user (r)"
@@ -54,10 +70,12 @@ while choice[0] != 'q':
     input_string = raw_input('Enter your choice: ')
     choice = input_string[0]
     if choice == 'r':   #server tcp recieve ack
-        Register()
+        Register(TCPsock)
     #elif choice == 'u': #server tcp 
-    #elif choice == 'l': #server tcp
-    #elif choice == 'q': #server tcp
+    elif choice == 'l': #server tcp
+        addr = Login(TCPsock)
+    elif choice == 'q': #server tcp
+        Quit(TCPsock)
     #elif choice == 'f': #client udp
     #elif choice == 'c': #client udp
     #elif choice == 'j': #client udp
