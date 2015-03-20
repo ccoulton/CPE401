@@ -1,6 +1,7 @@
 import sys
 import socket
 import string
+import os
 
 username = sys.argv[1]
 host = sys.argv[2]
@@ -25,16 +26,37 @@ def Login(server):
     data = server.recv(1024)
     print "got msg ", data, "from server"
     info = data.split(' ') #ack username ip port
-    return([info[2], int(info[3])])
+    return(server.getpeername())
 
+def Update(server):
+    inputString = ''
+    while inputString.find('.xml') == -1:
+        inputString = raw_input("Please input your profile file name (in xml): ")
+    profile = open(inputString, 'r') #open profile
+    profile.seek(0, os.SEEK_END)     #find file end so we can find the size of the file
+    size = profile.tell()            #size of file
+    profile.close()                  #close profile so we can start at the beginning
+    profile = open(inputString, 'r')
+    string = "UPDATE "+repr(size)+' '+profile.read(size)
+    server.sendall(string)
+    data = server.recv(1024)
+    print data
+    return
+    
 def Quit(server):
     string = "QUIT " +username
     server.send(string)
-    server.shutdown(socket.SHUT_WR)
     data = server.recv(1024)
-    print data
-    server.close()
-    return
+    data = data.split(' ')
+    if data[0] == "ACK":
+        print username, " logged out shuting connection"
+        server.shutdown(socket.SHUT_WR)
+        server.close()
+        return
+    else:
+        print "not logged out IP/Username incorrect"
+        #print to error.log
+        return
         
 #register function
 def Register(server):
@@ -71,7 +93,8 @@ while choice[0] != 'q':
     choice = input_string[0]
     if choice == 'r':   #server tcp recieve ack
         Register(TCPsock)
-    #elif choice == 'u': #server tcp 
+    elif choice == 'u': #server tcp
+        Update(TCPsock)
     elif choice == 'l': #server tcp
         addr = Login(TCPsock)
     elif choice == 'q': #server tcp
@@ -83,8 +106,8 @@ while choice[0] != 'q':
     #elif choice == 'p': #client udp
     #elif choice == 'e': #client udp
     #elif choice == 's': #server tcp returns result xml
-'''    
     
+'''       
 #udp server    
 UDP = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 UDP.bind(('127.0.0.1', 11111))
@@ -93,5 +116,4 @@ while True:
         print "Connect from", addr
         incoming = data.split(' ')
         output = "ACK " + incoming[1] + " " + addr[0] + " " + repr(addr[1])
-        UDP.sendto(output, addr)
-'''
+        UDP.sendto(output, addr)'''

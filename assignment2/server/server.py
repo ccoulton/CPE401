@@ -1,7 +1,7 @@
 import sys
 import socket
 import string
-import time
+from time import gmtime, strftime
 import datetime
 import re
 from threading import Thread
@@ -31,7 +31,7 @@ class clientHandler(Thread):
         #add user to list and file
         self._userList.append([name, False, ['', 0]])
         userFile = open('regusers.txt', 'a')
-        userFile.write(name)
+        userFile.write(name+'\n')
         userFile.close()
         #release lock
          
@@ -79,16 +79,23 @@ class clientHandler(Thread):
                         self._userList[self._userindex][1] = False
                         #release lock
                 else:
-                    self._sock.send("ERR "+sdata[1]+" not logged out"
+                    self._sock.send("ERR "+sdata[1]+" not logged out")
                     #get lock
                     #log out if true porse error if not'''
                 return   
                 
-                '''
             elif sdata[0].find('UPDATE') != -1:
-                #check user's ip, if correct
+                i = 1
+                #while sdata[1] <= 1024*i
+                data = data.split(' ', 2)
+                #get lock maybe
+                profile = open(self._userList[self._userindex][0]+'.xml', 'w')
+                profile.write(data[2])
+                profile.close()
+                #release lock
+                self._sock.send("SUCCESS "+strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()))
                 #update user's XML profile
-                self._sock.makefile(sdata[1]) #makefile([mode[, buffersize]])
+                #self._sock.makefile(sdata[1]) #makefile([mode[, buffersize]])
                 #self._socket.send("SUCCESS"+timestamp)'''
                 '''
             elif sdata[0].find('SEARCH') != -1:
