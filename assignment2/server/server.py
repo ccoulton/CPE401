@@ -103,7 +103,8 @@ class clientHandler(Thread):
                 #search public profile information for keyword sdata[1]
                 results = open('SResult.xml', 'a')
                 for users in self._userList: #itterate over user list
-                    try profile = open(users[0]+'.xml', 'r'):#try to open all profiles
+                    try: 
+                        profile = open(users[0]+'.xml', 'r') #try to open all profiles
                         print "profile found for user: ", users[0]
                         #regular expression though profile looking for keyword sdata[1]
                         #if match is found whole profile, username, and ip address is appended

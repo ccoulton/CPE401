@@ -2,6 +2,7 @@ import sys
 import socket
 import string
 import os
+import threading
 
 username = sys.argv[1]
 host = sys.argv[2]
@@ -12,11 +13,11 @@ def connectTCP():
     TCPsock.connect((host, host_port))
     return(TCPsock)
     
-def connectUDP(udphost, udp_port, address):
+def connectUDP(address):
     #udp connection
     UDPsock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    UDPsock.bind((address[0], repr(address[1])))
-    server = (udphost, udp_port)
+    UDPsock.bind((address[0], address[1]))
+    #server = (udphost, udp_port)
     return(UDPsock)
     
 #login function
@@ -26,16 +27,16 @@ def Login(server):
     data = server.recv(1024)
     print "got msg ", data, "from server"
     info = data.split(' ') #ack username ip port
-    return(server.getpeername())
+    #return(server.getpeername())
 
 def Update(server):
     inputString = ''
     while inputString.find('.xml') == -1:
         inputString = raw_input("Please input your profile file name (in xml): ")
     profile = open(inputString, 'r') #open profile
-    profile.seek(0, os.SEEK_END)     #find file end so we can find the size of the file
-    size = profile.tell()            #size of file
-    profile.close()                  #close profile so we can start at the beginning
+    profile.seek(0, os.SEEK_END) #find file end so we can find the size of the file
+    size = profile.tell()        #size of file
+    profile.close()              #close profile so we can start at the beginning
     profile = open(inputString, 'r')
     string = "UPDATE "+repr(size)+' '+profile.read(size)
     server.sendall(string)
@@ -66,13 +67,48 @@ def Register(server):
     server.send(string)
     data = server.recv(1024)
     print "got msg", data, "from server"
-        
+    
+def Chat(): #in the slides from class modified probly....
+    while True: #"server" side.
+        print 'waiting for connection ...."
+        client, address = server.accept()
+        print '... connected from: ', address
+        client.send('welcome to the chat room!')
+        while True:
+            msg = client.recv(BUFSIZE)
+            if not msg:
+                print 'client discon'
+                client.shutdown(socket.SHUT_RDWR)
+                client.close()
+                return
+            else:
+                print msg
+                client.send(raw_input('> '))
+        #client side
+    print server.recv(1024)
+    while True:
+        msg = raw_input('> ')
+        if not message:
+            return
+        server.send(msg + '\n')
+        reply = server.recv(1024)
+        if not reply:
+            print 'server discon'
+            return
+        print reply
+    server.close()
+    
 #sys.argv is filename, arg1, .... , argn
 #sys.argv should be User ID/ServerIP/Server port
 choice = 'n'
 TCPsock = connectTCP()
 addr = TCPsock.getsockname()
-print addr
+UDPsock = connectUDP(addr)
+#client needs to open up a udp server thread to handle incoming udp peer connections
+#that thread needs to interupt when it has somthing connect and handle it's process
+#possiably even breaking off threads of it's own to handle the different things it
+#has going on friend requests/chats etc
+#print addr
 while choice[0] != 'q':
     print "What action would you like to take on MaskTome v2.0?"
     print "Register New user (r)"
@@ -84,9 +120,9 @@ while choice[0] != 'q':
     print "Login (l)\nQuit (q)"
             #login/quit to server with user id
                 #ip/port recored/removed
-    print "Friend (f)\nConfirm (c)\nReject(j)"
+    print "Friend (f)"
         #request friend of user, confirm or reject user friend req
-    print "Chat (h)\nPost (p)\nEntries (e)"
+    print "Chat (c)\nPost (p)\nEntries (e)"
         #send chat to user, post group msg, and get entries from tim
     print "Search Public Profiles (s)"
             #search with keyword Regular expressions ho!
@@ -99,14 +135,14 @@ while choice[0] != 'q':
     elif choice == 'u': #server tcp
         Update(TCPsock)
     elif choice == 'l': #server tcp
-        addr = Login(TCPsock)
+        Login(TCPsock)
     elif choice == 'q': #server tcp
         Quit(TCPsock)
     #elif choice == 'f': #client udp
         #Friend(UDPsock)
+    '''#elif choice == 'c': #client udp #not needed because this will be handled
+    #elif choice == 'j': #client udp''' #when the friend message comes in from thread
     #elif choice == 'c': #client udp
-    #elif choice == 'j': #client udp
-    #elif choice == 'h': #client udp
     #elif choice == 'p': #client udp
     #elif choice == 'e': #client udp
     #elif choice == 's': #server tcp returns result xml
