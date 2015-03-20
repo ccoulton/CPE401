@@ -57,7 +57,7 @@ def Quit(server):
         print "not logged out IP/Username incorrect"
         #print to error.log
         return
-        
+       
 #register function
 def Register(server):
     input_string = raw_input('Enter your first and last name seperated by space: ')
@@ -71,6 +71,8 @@ def Register(server):
 #sys.argv should be User ID/ServerIP/Server port
 choice = 'n'
 TCPsock = connectTCP()
+addr = TCPsock.getsockname()
+print addr
 while choice[0] != 'q':
     print "What action would you like to take on MaskTome v2.0?"
     print "Register New user (r)"
@@ -91,6 +93,7 @@ while choice[0] != 'q':
                 #recieve results file of len in xml
     input_string = raw_input('Enter your choice: ')
     choice = input_string[0]
+    #append action to activity.log username/timestamp etc
     if choice == 'r':   #server tcp recieve ack
         Register(TCPsock)
     elif choice == 'u': #server tcp
@@ -100,12 +103,14 @@ while choice[0] != 'q':
     elif choice == 'q': #server tcp
         Quit(TCPsock)
     #elif choice == 'f': #client udp
+        #Friend(UDPsock)
     #elif choice == 'c': #client udp
     #elif choice == 'j': #client udp
     #elif choice == 'h': #client udp
     #elif choice == 'p': #client udp
     #elif choice == 'e': #client udp
     #elif choice == 's': #server tcp returns result xml
+        #Search(TCPsock)
     
 '''       
 #udp server    

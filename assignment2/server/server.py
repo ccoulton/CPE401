@@ -2,7 +2,7 @@ import sys
 import socket
 import string
 from time import gmtime, strftime
-import datetime
+import os
 import re
 from threading import Thread
 
@@ -38,7 +38,9 @@ class clientHandler(Thread):
     def run(self):
         while True:
             data = self._sock.recv(1024)
-            print data
+            #print data
+            #ask for lock on activity.log
+            #append to activity.log
             sdata = data.split(' ')
             
             if sdata[0].find('REGISTER') != -1:
@@ -85,22 +87,35 @@ class clientHandler(Thread):
                 return   
                 
             elif sdata[0].find('UPDATE') != -1:
-                i = 1
-                #while sdata[1] <= 1024*i
-                data = data.split(' ', 2)
+                #update user's XML profile
+                i = 1 #update needs to make sure pull the entire file
+                data = data.split(' ', 2) #lets not break up the xml file...
+                #while sdata[1] <= 1024*i:?
                 #get lock maybe
-                profile = open(self._userList[self._userindex][0]+'.xml', 'w')
-                profile.write(data[2])
-                profile.close()
+                profile = open(self._userList[self._userindex][0]+'.xml', 'w') #create local file
+                profile.write(data[2])  #write file to localfile
+                profile.close()         #close 
                 #release lock
                 self._sock.send("SUCCESS "+strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()))
-                #update user's XML profile
-                #self._sock.makefile(sdata[1]) #makefile([mode[, buffersize]])
                 #self._socket.send("SUCCESS"+timestamp)'''
-                '''
+                
             elif sdata[0].find('SEARCH') != -1:
                 #search public profile information for keyword sdata[1]
-                #self._socket.send("RESULTS"+xml.len+xml)'''
+                results = open('SResult.xml', 'a')
+                for users in self._userList: #itterate over user list
+                    try profile = open(users[0]+'.xml', 'r'):#try to open all profiles
+                        print "profile found for user: ", users[0]
+                        #regular expression though profile looking for keyword sdata[1]
+                        #if match is found whole profile, username, and ip address is appended
+                        #to results xml file, and send back to the user.  #WTF this is HUGE!
+                    except:
+                        pass
+                        
+                size = results.tell()
+                results.close()
+                results = open('SResult.xml', 'r') #probly need to create new file/unquie 
+                self._socket.sendall("RESULTS "+size+" "+results.read())
+                #Send whole file to the client.
         
 def initUsers():       
     usersFile = open('regusers.txt', 'r')
@@ -110,6 +125,7 @@ def initUsers():
         usersList.append([line, False, [' ', 0]])
     usersFile.close()
     return(usersList)
+    
 print "MaskTome v2.0 server script started"   
 print "press ctrl +c to quit gracefully."
 users = initUsers()
