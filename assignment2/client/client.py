@@ -3,7 +3,64 @@ import socket
 import string
 import os
 import threading
+import time
 
+class UDPconnectionhandler(threading.Thread):
+    def __init__(self, socket):
+        print "UDP conn hldr init"
+        threading.Thread.__init__(self, name = "UDPconn")
+        self._sock = socket
+        self._addr = socket.getsockname()
+        self.peers = []
+        
+    def run(self):
+        print "UDP waiting for connection..."
+        data, addr = self._sock.recvfrom(1024)
+        if not data:
+            print"no connection"
+            time.sleep(10)
+        else:
+            print "Connect from ", addr," data recivied ", data
+            output = "Connected to "+ self._addr[0]+" "+repr(self._addr[1])
+            self._sock.sendto(output, addr)
+            sdata = data.split(' ')
+            if sdata[0].find('FRIEND'):
+                self.Friend(sdata[1], addr)
+            #elif sdata[0].find('CHAT'):
+            #chat response'''
+            elif sdata[0].find('HI'):
+                self.HIhdlr(sdata[1], addr)
+            '''#add sender of hi to peer list
+            elif sdata[0].find('ENTRIES')
+            '''
+        self.run()
+        
+    def Friend(self, user, addr):
+        choice = ''
+        while True:
+            choice = raw_input(user+' has sent you a friend request what is your response (A)ccept, or (R)eject? ')
+            choice = choice.lower()
+            if   choice[0] == 'a':
+                print "you have accepted ", user,"'s request"
+                #send accept message
+                self.peers.append(user, [addr[0], addr[1]])
+                return
+            elif choice[0] == 'r':
+                print "You have choosen to reject ", user,"'s request"
+                #send reject message
+                return
+            else:
+                print "incorrect response"
+    
+    def Chat(self):
+        pass
+    
+    def HIhdlr(self, user, addr):
+        self.peers.append(user, [addr[0], addr[1]])
+    
+    def Entries(self):
+        pass
+                
 username = sys.argv[1]
 host = sys.argv[2]
 host_port = int(sys.argv[3])
@@ -68,23 +125,9 @@ def Register(server):
     data = server.recv(1024)
     print "got msg", data, "from server"
     
-def Chat(): #in the slides from class modified probly....
-    while True: #"server" side.
-        print 'waiting for connection ...."
-        client, address = server.accept()
-        print '... connected from: ', address
-        client.send('welcome to the chat room!')
-        while True:
-            msg = client.recv(BUFSIZE)
-            if not msg:
-                print 'client discon'
-                client.shutdown(socket.SHUT_RDWR)
-                client.close()
-                return
-            else:
-                print msg
-                client.send(raw_input('> '))
-        #client side
+def Chat(server): #in the slides from class modified probly....
+    #connect to server.
+    '''#client side
     print server.recv(1024)
     while True:
         msg = raw_input('> ')
@@ -96,7 +139,11 @@ def Chat(): #in the slides from class modified probly....
             print 'server discon'
             return
         print reply
-    server.close()
+    server.close()'''
+    pass
+    
+def Friend(server):
+    pass
     
 #sys.argv is filename, arg1, .... , argn
 #sys.argv should be User ID/ServerIP/Server port
@@ -104,6 +151,9 @@ choice = 'n'
 TCPsock = connectTCP()
 addr = TCPsock.getsockname()
 UDPsock = connectUDP(addr)
+UDPreciever = UDPconnectionhandler(UDPsock)
+UDPreciever.start()
+
 #client needs to open up a udp server thread to handle incoming udp peer connections
 #that thread needs to interupt when it has somthing connect and handle it's process
 #possiably even breaking off threads of it's own to handle the different things it
@@ -139,11 +189,13 @@ while choice[0] != 'q':
     elif choice == 'q': #server tcp
         Quit(TCPsock)
     #elif choice == 'f': #client udp
-        #Friend(UDPsock)
+        Friend(UDPsock)
     '''#elif choice == 'c': #client udp #not needed because this will be handled
     #elif choice == 'j': #client udp''' #when the friend message comes in from thread
     #elif choice == 'c': #client udp
+        #Chat(UDPreciever)
     #elif choice == 'p': #client udp
+        
     #elif choice == 'e': #client udp
     #elif choice == 's': #server tcp returns result xml
         #Search(TCPsock)
@@ -157,4 +209,20 @@ while True:
         print "Connect from", addr
         incoming = data.split(' ')
         output = "ACK " + incoming[1] + " " + addr[0] + " " + repr(addr[1])
-        UDP.sendto(output, addr)'''
+        UDP.sendto(output, addr)
+    
+    while True: #"server" side.
+        print 'waiting for connection ...."
+        client, address = server.accept()
+        print '... connected from: ', address
+        client.send('welcome to the chat room!')
+        while True:
+            msg = client.recv(BUFSIZE)
+            if not msg:
+                print 'client discon'
+                client.shutdown(socket.SHUT_RDWR)
+                client.close()
+                return
+            else:
+                print msg
+                client.send(raw_input('> '))'''
