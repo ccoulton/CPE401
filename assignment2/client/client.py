@@ -11,7 +11,6 @@ host_port = int(sys.argv[3])
 
 class UDPconnectionlistener(threading.Thread):
     def __init__(self, socket):
-        print "UDP conn hldr init"
         threading.Thread.__init__(self, name = "UDPconn")
         self._sock = socket
         self._addr = socket.getsockname()
@@ -23,7 +22,7 @@ class UDPconnectionlistener(threading.Thread):
             data, addr = self._sock.recvfrom(1024)
             print "Connect from ", addr
             #spin off udp handler thread
-            Handler = UDPHandler(data, addr, self.peers)
+            Handler = UDPHandler(self._sock, data, addr, self.peers)
             #start udp handler
             Handler.start()
             
@@ -32,8 +31,9 @@ class UDPconnectionlistener(threading.Thread):
         self._sock.close()
         
 class UDPHandler(threading.Thread):
-    def __init__(self, socket,  data, addr,  peerlist):
-        threading.Tread.__init__(self, name = "peerhndl")
+    def __init__(self, socket, data, addr,  peerlist):
+        #print "connection from ", addr, " sent ", data
+        threading.Thread.__init__(self, name = "peerhndl")
         self.data = data
         self._addr = addr
         self._peers = peerlist
@@ -41,25 +41,26 @@ class UDPHandler(threading.Thread):
         
     def run(self):
         sdata = self.data.split(' ')
-        output = "Connected to "+ self._addr[0]+" "+repr(self._addr[1])
-        self._sock.sendto(output, self._addr)
-        if sdata[0].find('FRIEND'):
+        #print self.data
+        #output = "Connected to "+ self._addr[0]+" "+repr(self._addr[1])
+        #self._sock.sendto(output, self._addr)
+        if sdata[0].find('FRIEND') != -1:
             self.Friend(sdata[1], self._addr)
-        elif sdata[0].find('CHAT'):
+        elif sdata[0].find('CHAT')!= -1:
             #chat response
             self.Chat()
-        elif sdata[0].find('ACCEPT'):
+        elif sdata[0].find('ACCEPT')!= -1:
             self.Accept()
-        elif sdata[0].find('REJECT'):
+        elif sdata[0].find('REJECT')!= -1:
             self.Reject()
-        elif sdata[0].find('DELIVERED'):
+        elif sdata[0].find('DELIVERED')!= -1:
             self.Delivered()
-        elif sdata[0].find('HI'):
+        elif sdata[0].find('HI')!= -1:
             self.HIhdlr(sdata[1], self._addr)
         #add sender of hi to peer list
-        elif sdata[0].find('ENTRIES'):
+        elif sdata[0].find('ENTRIES')!= -1:
             self.Entries()
-        elif sdata[0].find('POST'):
+        elif sdata[0].find('POST')!= -1:
             self.Post()
         
     def Friend(self, user, addr):
@@ -193,6 +194,32 @@ def Chat(server): #in the slides from class modified probly....
 def Friend(server):
     pass
     
+def UDPConnecttest(UDP):
+    ipPort = raw_input("please input a address and port seperated by a space: ")
+    ipPort = ipPort.split(' ')
+    addr = (ipPort[0], int(ipPort[1]))
+    UDP.sendto("test", addr)
+    
+def Search(server):
+    keyword = raw_input("please enter a keyword to search on all profiles: ")
+    server.send("SEARCH "+keyword)
+    results = open("results"+keyword+".xml", 'a')
+    data = server.recv(1024)
+    print data
+    data = data.split(' ', 2)
+    written = 0
+    size = int(data[1])
+    if size == 0:
+        print "no data found"
+        return
+    else:
+        xmldata = data[2]
+        while written < size:
+            results.write(xmldata)
+            written = written + 1024
+            if written < size:
+                xmldata = server.recv(1024)
+        
 #sys.argv is filename, arg1, .... , argn
 #sys.argv should be User ID/ServerIP/Server port
 choice = 'n'
@@ -238,15 +265,14 @@ while choice[0] != 'q':
         Quit(TCPsock)
     elif choice == 'f': #client udp
         Friend(UDPsock)
-    '''#elif choice == 'c': #client udp #not needed because this will be handled
+    #elif choice == 'c': #client udp #not needed because this will be handled
     #elif choice == 'j': #client udp''' #when the friend message comes in from thread
-    #elif choice == 'c': #client udp
-        #Chat(UDPreciever)
-    #elif choice == 'p': #client udp
-        
+    elif choice == 'c': #client udp
+        UDPConnecttest(UDPsock)     
+    #elif choice == 'p': #client udp    
     #elif choice == 'e': #client udp
-    #elif choice == 's': #server tcp returns result xml
-        #Search(TCPsock)
+    elif choice == 's': #server tcp returns result xml
+        Search(TCPsock)
     
 '''       
 #udp server    

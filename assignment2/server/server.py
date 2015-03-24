@@ -90,12 +90,17 @@ class clientHandler(Thread):
                 #update user's XML profile
                 i = 1 #update needs to make sure pull the entire file
                 data = data.split(' ', 2) #lets not break up the xml file...
-                #while sdata[1] <= 1024*i:?
+                xmldata = data[2]
+                profile = open(self._userList[self._userindex][0]+'.xml', 'a') #create local file
                 #get lock maybe
-                profile = open(self._userList[self._userindex][0]+'.xml', 'w') #create local file
-                profile.write(data[2])  #write file to localfile
+                while True:
+                    profile.write(xmldata)  #write file to localfile
+                    if i*1024 > sdata[1]:
+                        xmldata = self._sock.recv(1024)
+                    else:
+                        break
                 profile.close()         #close 
-                #release lock
+                #release lock    
                 self._sock.send("SUCCESS "+strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()))
                 #self._socket.send("SUCCESS"+timestamp)'''
                 
@@ -107,15 +112,36 @@ class clientHandler(Thread):
                         profile = open(users[0]+'.xml', 'r') #try to open all profiles
                         print "profile found for user: ", users[0]
                         #regular expression though profile looking for keyword sdata[1]
+                        for line in profile:
+                            finder = re.compile(sdata[1])
+                            result = finder.match(line)
+                            if result != None:
+                                print "found ",keyword, " in ",users[0]," profile"
+                                break
+                        if result == None:
+                            print "no matches found in ",users[0], " profile"
+                            profile.close()
+                        else:
+                            profile.close()
+                            profile = open(users[0]+'.xml', 'r')
+                            results.write(users[0]+" "+users[2][0]+" "
+                                                      +repr(users[2][1])+" ")
+                            for line in profile:
+                                results.write(line)
+                            profile.close()
                         #if match is found whole profile, username, and ip address is appended
                         #to results xml file, and send back to the user.  #WTF this is HUGE!
                     except:
-                        pass
-                        
+                        print "profile not found for user: ", users[0]       
                 size = results.tell()
                 results.close()
-                results = open('SResult.xml', 'r') #probly need to create new file/unquie 
-                self._socket.sendall("RESULTS "+size+" "+results.read())
+                results = open('SResult.xml', 'r') #probly need to create new file/unquie
+                output ="RESULTS "+repr(size)+" "
+                for line in results:
+                    output = output + line
+                results.close()
+                self._sock.sendall(output)
+                 
                 #Send whole file to the client.
         
 def initUsers():       
