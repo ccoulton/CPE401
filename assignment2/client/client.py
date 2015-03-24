@@ -5,7 +5,11 @@ import os
 import threading
 import time
 
-class UDPconnectionhandler(threading.Thread):
+username = sys.argv[1]
+host = sys.argv[2]
+host_port = int(sys.argv[3])
+
+class UDPconnectionlistener(threading.Thread):
     def __init__(self, socket):
         print "UDP conn hldr init"
         threading.Thread.__init__(self, name = "UDPconn")
@@ -15,25 +19,48 @@ class UDPconnectionhandler(threading.Thread):
         
     def run(self):
         print "UDP waiting for connection..."
-        data, addr = self._sock.recvfrom(1024)
-        if not data:
-            print"no connection"
-            time.sleep(10)
-        else:
-            print "Connect from ", addr," data recivied ", data
-            output = "Connected to "+ self._addr[0]+" "+repr(self._addr[1])
-            self._sock.sendto(output, addr)
-            sdata = data.split(' ')
-            if sdata[0].find('FRIEND'):
-                self.Friend(sdata[1], addr)
-            #elif sdata[0].find('CHAT'):
-            #chat response'''
-            elif sdata[0].find('HI'):
-                self.HIhdlr(sdata[1], addr)
-            '''#add sender of hi to peer list
-            elif sdata[0].find('ENTRIES')
-            '''
-        self.run()
+        while 1:
+            data, addr = self._sock.recvfrom(1024)
+            print "Connect from ", addr
+            #spin off udp handler thread
+            Handler = UDPHandler(data, addr, self.peers)
+            #start udp handler
+            Handler.start()
+            
+    def stop(self):
+        self._sock.shutdown(socket.SHUT_RDWR)
+        self._sock.close()
+        
+class UDPHandler(threading.Thread):
+    def __init__(self, socket,  data, addr,  peerlist):
+        threading.Tread.__init__(self, name = "peerhndl")
+        self.data = data
+        self._addr = addr
+        self._peers = peerlist
+        self._sock = socket
+        
+    def run(self):
+        sdata = self.data.split(' ')
+        output = "Connected to "+ self._addr[0]+" "+repr(self._addr[1])
+        self._sock.sendto(output, self._addr)
+        if sdata[0].find('FRIEND'):
+            self.Friend(sdata[1], self._addr)
+        elif sdata[0].find('CHAT'):
+            #chat response
+            self.Chat()
+        elif sdata[0].find('ACCEPT'):
+            self.Accept()
+        elif sdata[0].find('REJECT'):
+            self.Reject()
+        elif sdata[0].find('DELIVERED'):
+            self.Delivered()
+        elif sdata[0].find('HI'):
+            self.HIhdlr(sdata[1], self._addr)
+        #add sender of hi to peer list
+        elif sdata[0].find('ENTRIES'):
+            self.Entries()
+        elif sdata[0].find('POST'):
+            self.Post()
         
     def Friend(self, user, addr):
         choice = ''
@@ -43,28 +70,48 @@ class UDPconnectionhandler(threading.Thread):
             if   choice[0] == 'a':
                 print "you have accepted ", user,"'s request"
                 #send accept message
-                self.peers.append(user, [addr[0], addr[1]])
-                return
+                self._peers.append(user, self._sock.getpeername())
+                output = "ACCEPT "
+                break
             elif choice[0] == 'r':
                 print "You have choosen to reject ", user,"'s request"
                 #send reject message
-                return
+                output = "REJECT "
+                break
             else:
                 print "incorrect response"
-    
+        output = output+username
+        self._sock.sendto(output, self._addr)
+        
     def Chat(self):
+        sdata = self.data.split(' ')
+        #packet structure
+        #CHAT USERNAME counter msg
+        output = "DELIVERED "+username+sdata[3]
+        counter = sdata[3]+1
+        self._sock.sendto(output, self._addr) #this should close the thread waiting for delivered
+        #self._sock.
+        
+                
+        #send back
+        #delievered username counter msg try 3 times every 30 seconds
         pass
-    
-    def HIhdlr(self, user, addr):
-        self.peers.append(user, [addr[0], addr[1]])
     
     def Entries(self):
         pass
-                
-username = sys.argv[1]
-host = sys.argv[2]
-host_port = int(sys.argv[3])
-
+        
+    def Accept(self):
+        pass
+       
+    def Reject(self):
+        pass
+    
+    def Delievered(self):
+        pass
+        
+    def Post(self):
+        pass
+        
 def connectTCP():
     TCPsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     TCPsock.connect((host, host_port))
@@ -127,6 +174,7 @@ def Register(server):
     
 def Chat(server): #in the slides from class modified probly....
     #connect to server.
+    #CHAT USERNAME Counter message
     '''#client side
     print server.recv(1024)
     while True:
@@ -151,7 +199,7 @@ choice = 'n'
 TCPsock = connectTCP()
 addr = TCPsock.getsockname()
 UDPsock = connectUDP(addr)
-UDPreciever = UDPconnectionhandler(UDPsock)
+UDPreciever = UDPconnectionlistener(UDPsock)
 UDPreciever.start()
 
 #client needs to open up a udp server thread to handle incoming udp peer connections
@@ -188,7 +236,7 @@ while choice[0] != 'q':
         Login(TCPsock)
     elif choice == 'q': #server tcp
         Quit(TCPsock)
-    #elif choice == 'f': #client udp
+    elif choice == 'f': #client udp
         Friend(UDPsock)
     '''#elif choice == 'c': #client udp #not needed because this will be handled
     #elif choice == 'j': #client udp''' #when the friend message comes in from thread
@@ -211,18 +259,4 @@ while True:
         output = "ACK " + incoming[1] + " " + addr[0] + " " + repr(addr[1])
         UDP.sendto(output, addr)
     
-    while True: #"server" side.
-        print 'waiting for connection ...."
-        client, address = server.accept()
-        print '... connected from: ', address
-        client.send('welcome to the chat room!')
-        while True:
-            msg = client.recv(BUFSIZE)
-            if not msg:
-                print 'client discon'
-                client.shutdown(socket.SHUT_RDWR)
-                client.close()
-                return
-            else:
-                print msg
-                client.send(raw_input('> '))'''
+    )'''
