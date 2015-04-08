@@ -10,6 +10,8 @@
 	<string>Assignment3</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
+		<key>1C75F1C5CFCB95B3702F6F632FA05ED5244B519E</key>
+		<string>https://github.com/robbiehanson/CocoaAsyncSocket.git</string>
 		<key>246D5FCF122F04418F5ACB30B64956CD3C3A0DDB</key>
 		<string>https://github.com/ccoulton/CPE401</string>
 	</dict>
@@ -17,6 +19,8 @@
 	<string>Assignment3/Assignment3.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
+		<key>1C75F1C5CFCB95B3702F6F632FA05ED5244B519E</key>
+		<string>../../../Assignment3/Assignment3/async-socket</string>
 		<key>246D5FCF122F04418F5ACB30B64956CD3C3A0DDB</key>
 		<string>../../..</string>
 	</dict>
@@ -28,6 +32,14 @@
 	<string>246D5FCF122F04418F5ACB30B64956CD3C3A0DDB</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>1C75F1C5CFCB95B3702F6F632FA05ED5244B519E</string>
+			<key>IDESourceControlWCCName</key>
+			<string>async-socket</string>
+		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>

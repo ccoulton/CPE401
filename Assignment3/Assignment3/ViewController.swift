@@ -8,41 +8,33 @@
 
 import UIKit
 import CoreFoundation
+//import bridge
 
-class ViewController: UIViewController, NSStreamDelegate {
+class InputScreen: UIViewController{
 
     @IBOutlet weak var Host_Port: UITextField!
     @IBOutlet weak var Host_Name: UITextField!
     @IBOutlet weak var User_Name: UITextField!
     @IBAction func Host_connect(sender: UIButton) {
-        var TCPin: Unmanaged<CFReadStream>?
-        var TCPout: Unmanaged<CFWriteStream>?
         var Port: UInt32
+        var Host: NSString
+        Host = self.Host_Name.text
+        /*var addr: sockaddr
+        
+        TCPsock = socket(AF_INET, SOCK_STREAM)
+        //bind(TCPsock, addr, <#socklen_t#>)*/
         if let number = self.Host_Port.text.toInt()
             {
             Port = UInt32(number)
             }
         else{
-            println("\(self.Host_Port.text) is not a number")
-            Port = 1111
+            print(self.Host_Port.text)
+            Port = 0
         }
-        let TCPalloc: CFAllocator!
-        //try to connect to server
-        CFStreamCreatePairWithSocketToHost(TCPalloc,
-            self.Host_Name.text!,
-            Port,
-            &TCPin,
-            &TCPout)
-        //var opened = CFWriteStreamOpen(TCPout.CFWriteStream!)
-        var streamIn: NSStream?
-        var streamOut: NSStream?
-        
-        streamOut = TCPout!.takeRetainedValue()
-        streamIn = TCPin!.takeRetainedValue()
-        streamIn?.delegate = self
-        ste
-        
-        
+        //
+        let mainApp = UIApplication.sharedApplication().delegate as AppDelegate
+        mainApp.TCPconnect(Host, host_Port: Port)
+        mainApp.UserName = self.User_Name.text
     }
     
     override func viewDidLoad() {
@@ -60,4 +52,34 @@ class ViewController: UIViewController, NSStreamDelegate {
     }
 
 }
+
+class menuScreen: UIViewController{
+    let mainApp = UIApplication.sharedApplication().delegate as AppDelegate
+    
+    @IBAction func Login(sender: UIButton) {
+        var temp: NSString
+        temp = "LOGIN "
+        var buffer: NSString
+        buffer = temp.stringByAppendingString(mainApp.UserName!)
+        let data: NSData = temp.dataUsingEncoding(NSUTF8StringEncoding)!
+        mainApp.TCPStreamOut?.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length)
+    }//*/
+   @IBAction func Quit(sender:UIButton)
+    {
+    mainApp.TCPStreamIn?.close()
+    //mainApp.TCPStreamOut?.write("QUIT ", maxLength: 1024)
+    mainApp.TCPStreamOut?.close()
+    
+    }//*/
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view, typically from a nib.
+    }
+
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    	}
+    
+    }
 

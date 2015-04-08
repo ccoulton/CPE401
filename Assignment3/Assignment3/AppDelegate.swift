@@ -10,10 +10,14 @@ import UIKit
 import CoreData
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
 
     var window: UIWindow?
-    var LoginInfo: ViewController?
+    var LoginInfo: InputScreen?
+    var TCPStreamIn: NSInputStream?
+    var TCPStreamOut: NSOutputStream?
+    var Menu: menuScreen?
+    var UserName: NSString?
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         window?.makeKeyAndVisible()
@@ -96,16 +100,41 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Core Data Saving support
 
-    func saveContext () {
-        if let moc = self.managedObjectContext {
+    func saveContext ()
+        {
+        if let moc = self.managedObjectContext
+            {
             var error: NSError? = nil
-            if moc.hasChanges && !moc.save(&error) {
+            if moc.hasChanges && !moc.save(&error)
+                {
                 // Replace this implementation with code to handle the error appropriately.
                 // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 NSLog("Unresolved error \(error), \(error!.userInfo)")
                 abort()
+                }
             }
         }
+        
+    
+    func TCPconnect(host_IP: NSString, host_Port: UInt32)//->Bool
+        {
+        let TCPalloc: CFAllocator!
+        var TCPin: Unmanaged<CFReadStream>?
+        var TCPout: Unmanaged<CFWriteStream>?
+        //try to connect to server
+        CFStreamCreatePairWithSocketToHost(TCPalloc, host_IP, host_Port, &TCPin, &TCPout)
+        
+        self.TCPStreamOut = TCPout!.takeRetainedValue()
+        self.TCPStreamIn = TCPin!.takeRetainedValue()
+        self.TCPStreamIn?.delegate = self
+        self.TCPStreamOut?.delegate = self
+        self.TCPStreamIn?.scheduleInRunLoop((NSRunLoop .currentRunLoop()), forMode: NSDefaultRunLoopMode)
+        self.TCPStreamOut?.scheduleInRunLoop((NSRunLoop .currentRunLoop()), forMode: NSDefaultRunLoopMode)
+        self.TCPStreamIn?.open()
+        self.TCPStreamOut?.open()
+    }
+    func sharedApplication() -> AppDelegate{
+        return self
     }
 
 }
