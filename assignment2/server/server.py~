@@ -38,7 +38,7 @@ class clientHandler(Thread):
     def run(self):
         while True:
             data = self._sock.recv(1024)
-            print data
+            #print data
             #ask for lock on activity.log
             #append to activity.log
             sdata = data.split(' ')
