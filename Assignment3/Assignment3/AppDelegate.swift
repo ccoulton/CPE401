@@ -18,6 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
     var TCPStreamOut: NSOutputStream?
     var Menu: menuScreen?
     var UserName: NSString?
+    //var master UDP socket
+    //list of UDP peers with sockets.
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         window?.makeKeyAndVisible()
@@ -54,7 +56,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
     lazy var applicationDocumentsDirectory: NSURL = {
         // The directory the application uses to store the Core Data store file. This code uses a directory named "ccunr.Assignment3" in the application's documents Application Support directory.
         let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
-        return urls[urls.count-1] as NSURL
+        return urls[urls.count-1] as! NSURL
     }()
 
     lazy var managedObjectModel: NSManagedObjectModel = {
@@ -118,7 +120,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
     
     func TCPconnect(host_IP: NSString, host_Port: UInt32)//->Bool
         {
-        let TCPalloc: CFAllocator!
+        var TCPalloc: CFAllocator?
+        TCPalloc = kCFAllocatorDefault
         var TCPin: Unmanaged<CFReadStream>?
         var TCPout: Unmanaged<CFWriteStream>?
         //try to connect to server
@@ -133,9 +136,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
         self.TCPStreamIn?.open()
         self.TCPStreamOut?.open()
     }
+    
     func sharedApplication() -> AppDelegate{
         return self
     }
+    
+    //make master udp listener delegate
+        //read check udp status
+        //if bytes avaiable
+        //recieve from socket
+        //parse string for recieved string
+        //if WALL pull all data and display xml
+    
+        //if reject show reject
+        //if accept append peer list and list of udp peers
+        //if chat display message and user name
+        //if post fof
+        //change tag to friends and send to all peers on list
+        //if hi add peer's port and create a UDP socket for that peer
+        //if friend ask if accept or reject
 
 }
 
