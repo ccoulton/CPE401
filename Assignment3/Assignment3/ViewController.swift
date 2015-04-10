@@ -154,6 +154,15 @@ class menuScreen: UIViewController{
             //write to socket
             mainApp.TCPStreamOut?.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length)
             //read from socket
+            var resultBuffer: UInt8 = 0
+            var bytesRead = 0
+            bytesRead = mainApp.TCPStreamIn?.read(&resultBuffer, maxLength: 1024) as Int!
+            var _data: NSMutableData = NSMutableData()
+            _data.appendBytes(&resultBuffer, length: bytesRead)
+            var result = NSString(data: _data, encoding: NSUTF8StringEncoding)!
+            print(result)
+            while true{
+                break}
             //mainApp.ReadFromTCP()
             //display resulting xml
         }
