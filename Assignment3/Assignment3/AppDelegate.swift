@@ -18,6 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
     var TCPStreamOut: NSOutputStream?
     var Menu: menuScreen?
     var UserName: NSString?
+    //var Reg: GetReginfo?
     //var master UDP socket
     //list of UDP peers with sockets.
     
@@ -56,7 +57,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
     lazy var applicationDocumentsDirectory: NSURL = {
         // The directory the application uses to store the Core Data store file. This code uses a directory named "ccunr.Assignment3" in the application's documents Application Support directory.
         let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
-        return urls[urls.count-1] as! NSURL
+        return urls[urls.count-1] as NSURL
     }()
 
     lazy var managedObjectModel: NSManagedObjectModel = {
@@ -129,8 +130,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
         
         self.TCPStreamOut = TCPout!.takeRetainedValue()
         self.TCPStreamIn = TCPin!.takeRetainedValue()
-        self.TCPStreamIn?.delegate = self
-        self.TCPStreamOut?.delegate = self
+        self.TCPStreamIn?.delegate = nil
+        self.TCPStreamOut?.delegate = nil
         self.TCPStreamIn?.scheduleInRunLoop((NSRunLoop .currentRunLoop()), forMode: NSDefaultRunLoopMode)
         self.TCPStreamOut?.scheduleInRunLoop((NSRunLoop .currentRunLoop()), forMode: NSDefaultRunLoopMode)
         self.TCPStreamIn?.open()
@@ -139,6 +140,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
     
     func sharedApplication() -> AppDelegate{
         return self
+    }
+    
+    func stream(aStream: NSStream, handleEvent eventCode: NSStreamEvent) {
+        print(eventCode)
+        //switch(eventCode){
+        //case :
+            if aStream == self.TCPStreamIn{
+                self.ReadFromTCP()
+            }
+        //}
+    }
+    
+    func ReadFromTCP(){
+        if ((self.TCPStreamIn?.hasBytesAvailable) != nil){
+            var resultBuffer: UInt8 = 0
+            var bytesRead = 0
+            bytesRead = self.TCPStreamIn?.read(&resultBuffer, maxLength: 1024) as Int!
+            var _data: NSMutableData = NSMutableData()
+            _data.appendBytes(&resultBuffer, length: bytesRead)
+            var result = NSString(data: _data, encoding: NSUTF8StringEncoding)!
+            print(result)
+        }
     }
     
     //make master udp listener delegate
@@ -157,4 +180,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
         //if friend ask if accept or reject
 
 }
-

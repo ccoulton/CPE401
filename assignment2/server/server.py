@@ -112,13 +112,12 @@ class clientHandler(Thread):
                         profile = open(users[0]+'.xml', 'r') #try to open all profiles
                         print "profile found for user: ", users[0]
                         #regular expression though profile looking for keyword sdata[1]
+                        found = 0
                         for line in profile:
-                            finder = re.compile(sdata[1])
-                            result = finder.match(line)
-                            if result != None:
-                                print "found ",keyword, " in ",users[0]," profile"
-                                break
-                        if result == None:
+                            if line.find(sdata[1]) != -1:
+                                found = 1
+                                print "found ", sdata[1]
+                        if found == 0:
                             print "no matches found in ",users[0], " profile"
                             profile.close()
                         else:

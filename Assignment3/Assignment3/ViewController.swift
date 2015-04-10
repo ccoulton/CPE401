@@ -32,7 +32,7 @@ class InputScreen: UIViewController{
             Port = 0
         }
         //
-        let mainApp = UIApplication.sharedApplication().delegate as! AppDelegate
+        let mainApp = UIApplication.sharedApplication().delegate as AppDelegate
         mainApp.TCPconnect(Host, host_Port: Port)
         mainApp.UserName = self.User_Name.text
     }
@@ -53,9 +53,49 @@ class InputScreen: UIViewController{
 
 }
 
+class GetReginfo: UIViewController{
+    
+    let mainApp = UIApplication.sharedApplication().delegate as AppDelegate
+    
+    
+    @IBOutlet weak var FName: UITextField!
+    @IBOutlet weak var LName: UITextField!
+    @IBAction func Register(sender:UIButton){
+        var temp: NSString
+        temp = "REGISTER "
+        var buffer: NSString
+        buffer = temp.stringByAppendingString(self.mainApp.UserName! as String) //add user name
+        buffer = buffer.stringByAppendingString(" ")  //add a space
+        //wait till registar button returns
+        buffer = buffer.stringByAppendingString(self.FName.text as String)  //add first name to string
+        buffer = buffer.stringByAppendingString(" ")
+        buffer = buffer.stringByAppendingString(self.LName.text as String)  //add last name to string
+        let data: NSData = buffer.dataUsingEncoding(NSUTF8StringEncoding)!
+        mainApp.TCPStreamOut?.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length)
+        //read from tcpstreamin
+        //check for ack package
+        //mainApp.ReadFromTCP()
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view, typically from a nib.
+    }
+    
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
+    
+
+}
+
 class menuScreen: UIViewController{
-    let mainApp = UIApplication.sharedApplication().delegate as! AppDelegate
+    @IBOutlet weak var Keyword: UITextField!
+    let mainApp = UIApplication.sharedApplication().delegate as AppDelegate
+    var RegInput: GetReginfo?
     //TCP MODUALS
+    
     @IBAction func Login(sender: UIButton) {
         var temp: NSString
         temp = "LOGIN "
@@ -64,6 +104,7 @@ class menuScreen: UIViewController{
         let data: NSData = buffer.dataUsingEncoding(NSUTF8StringEncoding)!
         //write to socket
         mainApp.TCPStreamOut?.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length)
+        //mainApp.ReadFromTCP()
         //open master UDP socket
         //send HI message to Peers
         //make list of peers and set up ports for each
@@ -71,29 +112,24 @@ class menuScreen: UIViewController{
     }
     
     @IBAction func Quit(sender:UIButton){
+        //close inputstream and clean up
         mainApp.TCPStreamIn?.close()
+        mainApp.TCPStreamIn?.removeFromRunLoop((NSRunLoop.currentRunLoop()), forMode: NSDefaultRunLoopMode)
+        mainApp.TCPStreamIn?.delegate = nil
+        //send out quit message to server
         var temp: NSString
         temp = "QUIT "
-        var buffer: NSString
-        buffer = temp.stringByAppendingString(self.mainApp.UserName! as String)
-        let data: NSData = buffer.dataUsingEncoding(NSUTF8StringEncoding)!
+        temp = temp.stringByAppendingString(self.mainApp.UserName! as String)
+        let data: NSData = temp.dataUsingEncoding(NSUTF8StringEncoding)!
         mainApp.TCPStreamOut?.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length)
+        //close output stream and clean up after self
         mainApp.TCPStreamOut?.close()
+        mainApp.TCPStreamOut?.removeFromRunLoop((NSRunLoop.currentRunLoop()), forMode: NSDefaultRunLoopMode)
+        mainApp.TCPStreamOut?.delegate = nil
         //close UDP sockets
         //close master UDP socket
     }
     
-    @IBAction func Register(sender:UIButton){
-        var temp: NSString
-        temp = "REGISTER "
-        var buffer: NSString
-        buffer = temp.stringByAppendingString(self.mainApp.UserName! as String)
-        //get first and last name some how
-        let data: NSData = buffer.dataUsingEncoding(NSUTF8StringEncoding)!
-        mainApp.TCPStreamOut?.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length)
-        //read from tcpstreamin
-        //check for ack package
-    }
     
     @IBAction func Update(sender:UIButton){
         //ask for xml file
@@ -106,15 +142,28 @@ class menuScreen: UIViewController{
     }
     
     @IBAction func Search(sender:UIButton){
-        //ask for keyword
-        //append SEARCH and keyword to data
-        //write to socket
-        //read from socket 
-        //display resulting xml
+        //keyword is in self.Keyword
+        if self.Keyword.text == nil{//if textbox was empty
+            return}
+        else{
+            //append SEARCH and keyword to data
+            var temp: NSString
+            temp = "SEARCH "
+            temp = temp.stringByAppendingString(self.Keyword.text)
+            let data: NSData = temp.dataUsingEncoding(NSUTF8StringEncoding)!
+            //write to socket
+            mainApp.TCPStreamOut?.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length)
+            //read from socket
+            //mainApp.ReadFromTCP()
+            //display resulting xml
+        }
+        
     }
     
     @IBAction func Chat(sender:UIButton){
+        //create new view controller
         //ask for which peer to talk to
+        
         //send "chat
     }
     
