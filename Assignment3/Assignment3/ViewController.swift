@@ -47,9 +47,9 @@ class InputScreen: UIViewController{
         // Dispose of any resources that can be recreated.
     }
 
-    func stream(aStream: NSStream, handleEvent eventCode: NSStreamEvent) {
+    //func stream(aStream: NSStream, handleEvent eventCode: NSStreamEvent) {
         
-    }
+    //}
 
 }
 
@@ -146,27 +146,34 @@ class menuScreen: UIViewController{
         if self.Keyword.text == nil{//if textbox was empty
             return}
         else{
-            //append SEARCH and keyword to data
-            var temp: NSString
-            temp = "SEARCH "
-            temp = temp.stringByAppendingString(self.Keyword.text)
-            let data: NSData = temp.dataUsingEncoding(NSUTF8StringEncoding)!
-            //write to socket
-            mainApp.TCPStreamOut?.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length)
-            //read from socket
-            var resultBuffer: UInt8 = 0
-            var bytesRead = 0
-            bytesRead = mainApp.TCPStreamIn?.read(&resultBuffer, maxLength: 1024) as Int!
-            var _data: NSMutableData = NSMutableData()
-            _data.appendBytes(&resultBuffer, length: bytesRead)
-            var result = NSString(data: _data, encoding: NSUTF8StringEncoding)!
-            print(result)
-            while true{
-                break}
-            //mainApp.ReadFromTCP()
-            //display resulting xml
+            sender.enabled = false;
+            
+            
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                //append SEARCH and keyword to data
+                var temp: NSString
+                temp = NSString(format: "%@", "SEARCH ")
+                temp = temp.stringByAppendingString(self.Keyword.text)
+                let data: NSData = temp.dataUsingEncoding(NSUTF8StringEncoding)!
+                //write to socket
+                self.mainApp.TCPStreamOut?.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length)
+                //read from socket
+                var resultBuffer:NSMutableData = NSMutableData(length: 1024)!
+                var bytesRead:Int = 0
+                bytesRead = self.mainApp.TCPStreamIn?.read(UnsafeMutablePointer<UInt8>(resultBuffer.mutableBytes), maxLength: 1024) as Int!
+                resultBuffer.length = bytesRead;
+                var result = NSString(data: resultBuffer, encoding: NSUTF8StringEncoding)!
+                print(result)
+                //while true{
+                //  break}
+                //mainApp.ReadFromTCP()
+                //display resulting xml
+                
+                sender.enabled = true;
+
+
+            })
         }
-        
     }
     
     @IBAction func Chat(sender:UIButton){

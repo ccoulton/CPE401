@@ -140,7 +140,7 @@ class clientHandler(Thread):
                     output = output + line
                 results.close()
                 self._sock.sendall(output)
-                 
+                os.remove('SResult.xml')
                 #Send whole file to the client.
         
 def initUsers():       
