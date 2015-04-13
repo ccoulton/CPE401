@@ -79,6 +79,7 @@ class clientHandler(Thread):
                         self._sock.close()
                         #get lock
                         self._userList[self._userindex][1] = False
+                        self._userList[self._userindex][2] = [ ' ', 0]
                         #release lock
                 else:
                     self._sock.send("ERR "+sdata[1]+" not logged out")
@@ -123,10 +124,11 @@ class clientHandler(Thread):
                         else:
                             profile.close()
                             profile = open(users[0]+'.xml', 'r')
-                            results.write(users[0]+" "+users[2][0]+" "
-                                                      +repr(users[2][1])+" ")
+                            results.write("<result><user>"+users[0]+"</user><ip>"+users[2][0]+"</ip><port>"
+                                                      +repr(users[2][1])+"</port>")
                             for line in profile:
                                 results.write(line)
+                            results.write("</result>")
                             profile.close()
                         #if match is found whole profile, username, and ip address is appended
                         #to results xml file, and send back to the user.  #WTF this is HUGE!
@@ -140,7 +142,7 @@ class clientHandler(Thread):
                     output = output + line
                 results.close()
                 self._sock.sendall(output)
-                os.remove('SResult.xml')
+                os.remove('SResult.xml') #or just clean up the results file.
                 #Send whole file to the client.
         
 def initUsers():       

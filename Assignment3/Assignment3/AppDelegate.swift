@@ -8,8 +8,9 @@
 
 import UIKit
 import CoreData
-import sys/socket
-import netinet/in
+import Foundation
+//import sys/socket
+//import netinet/in
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
@@ -21,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
     var Menu: menuScreen?
     var UserName: NSString?
     var MasterUDP: CFSocket?
-    var Peerlist: CFSocket = CFSocket(length: 15)?
+    //var Peerlist: CFSocket = CFSocket(length: 15)?
     //var master UDP socket
     //list of UDP peers with sockets.
     
@@ -34,12 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
-    }var resultBuffer:NSMutableData = NSMutableData(length: 1024)!
-                var bytesRead:Int = 0
-                bytesRead = self.mainApp.TCPStreamIn?.read(UnsafeMutablePointer<UInt8>(resultBuffer.mutableBytes), maxLength: 1024) as Int!
-                resultBuffer.length = bytesRead;
-                var result = NSString(data: resultBuffer, encoding: NSUTF8StringEncoding)!
-                print(result)
+    }
 
     func applicationDidEnterBackground(application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
@@ -65,7 +61,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
     lazy var applicationDocumentsDirectory: NSURL = {
         // The directory the application uses to store the Core Data store file. This code uses a directory named "ccunr.Assignment3" in the application's documents Application Support directory.
         let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
-        return urls[urls.count-1] as NSURL
+        return urls[urls.count-1] as! NSURL
     }()
 
     lazy var managedObjectModel: NSManagedObjectModel = {
@@ -160,13 +156,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
         //}
     }
     
-    func ReadFromTCP() -> NSStream{
+    func ReadFromTCP() -> NSString{
         var resultBuffer:NSMutableData = NSMutableData(length: 1024)!
         var bytesRead:Int = 0
-        bytesRead = self.mainApp.TCPStreamIn?.read(UnsafeMutablePointer<UInt8>(resultBuffer.mutableBytes), maxLength: 1024) as Int!
+        bytesRead = self.TCPStreamIn?.read(UnsafeMutablePointer<UInt8>(resultBuffer.mutableBytes), maxLength: 1024) as Int!
         resultBuffer.length = bytesRead;
         var result = NSString(data: resultBuffer, encoding: NSUTF8StringEncoding)!
-        print(result)
+        //print(result)
         return result
     }
     
