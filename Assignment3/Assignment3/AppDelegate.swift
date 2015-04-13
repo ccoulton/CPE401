@@ -8,6 +8,8 @@
 
 import UIKit
 import CoreData
+import sys/socket
+import netinet/in
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
@@ -18,7 +20,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
     var TCPStreamOut: NSOutputStream?
     var Menu: menuScreen?
     var UserName: NSString?
-    //var Reg: GetReginfo?
+    var MasterUDP: CFSocket?
+    var Peerlist: CFSocket = CFSocket(length: 15)?
     //var master UDP socket
     //list of UDP peers with sockets.
     
@@ -31,7 +34,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
-    }
+    }var resultBuffer:NSMutableData = NSMutableData(length: 1024)!
+                var bytesRead:Int = 0
+                bytesRead = self.mainApp.TCPStreamIn?.read(UnsafeMutablePointer<UInt8>(resultBuffer.mutableBytes), maxLength: 1024) as Int!
+                resultBuffer.length = bytesRead;
+                var result = NSString(data: resultBuffer, encoding: NSUTF8StringEncoding)!
+                print(result)
 
     func applicationDidEnterBackground(application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
@@ -152,16 +160,36 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
         //}
     }
     
-    func ReadFromTCP(){
-        if ((self.TCPStreamIn?.hasBytesAvailable) != nil){
-            var resultBuffer: UInt8 = 0
-            var bytesRead = 0
-            bytesRead = self.TCPStreamIn?.read(&resultBuffer, maxLength: 1024) as Int!
-            var _data: NSMutableData = NSMutableData()
-            _data.appendBytes(&resultBuffer, length: bytesRead)
-            var result = NSString(data: _data, encoding: NSUTF8StringEncoding)!
-            print(result)
-        }
+    func ReadFromTCP() -> NSStream{
+        var resultBuffer:NSMutableData = NSMutableData(length: 1024)!
+        var bytesRead:Int = 0
+        bytesRead = self.mainApp.TCPStreamIn?.read(UnsafeMutablePointer<UInt8>(resultBuffer.mutableBytes), maxLength: 1024) as Int!
+        resultBuffer.length = bytesRead;
+        var result = NSString(data: resultBuffer, encoding: NSUTF8StringEncoding)!
+        print(result)
+        return result
+    }
+    
+    func ConnectUDP(){
+    	//types required cfsockcreate(alloc, protofam, sock type, proto, callbacktypes, callout, context)
+    	//readcallback is called when data is avaiable
+    	MasterUDP = CFSocketCreate(kCFAllocatorDefault, PF_INET, SOCK_DGRAM, IPPROTO_UDP, 0, nil, nil)
+    	if MasterUDP == nil{
+    		print("Failed to create")
+    		}
+    	else{
+    		/* from stackoverflow
+    		struct sockaddr_in addr;
+    		memset(&addr, 0 sizeof(addr))
+    		addr.sin_len = sizeof(addr)
+    		addr.sin_family = AF_INET
+    		addr.sin_port = htons(9)
+    		inet_aton(0.0.0.0, &addr.sin_addr)*/
+    		//				  cfsocekt cfdata, cfdata, ?
+    		//CFSocketSendData(socket, address, data, ?)
+    		//masterUDP.delegate = udplistener
+    		}
+    		
     }
     
     //make master udp listener delegate
@@ -170,7 +198,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
         //recieve from socket
         //parse string for recieved string
         //if WALL pull all data and display xml
-    
         //if reject show reject
         //if accept append peer list and list of udp peers
         //if chat display message and user name
