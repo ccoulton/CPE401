@@ -78,6 +78,7 @@ class GetReginfo: UIViewController{
 		    //check for ack package
 		    var Ack: NSStream = mainApp.ReadFromTCP()
 		    //ack split on spaces.
+		    //var array: NSArray _n componentsSeparatedByString: " "
 		    sender.enabled = true; //enable button
 		})
     }
@@ -114,6 +115,7 @@ class menuScreen: UIViewController{
 			//get ack from tpc socket
 		   	var ack: NSStream = self.mainApp.ReadFromTCP()
 		   	//split ack into ack username ip, and port to set up udp
+		   	//var array: NSArray _n componentsSeparatedByString: " "
 			//open master UDP socket
 			//make list of peers and set up ports for each
 			//send HI message to Peers
@@ -160,6 +162,7 @@ class menuScreen: UIViewController{
         //read on socket for success
         //var ack: NSStream = self.mainApp.ReadFromTCP()
         //ack.split()
+        //var array: NSArray _n componentsSeparatedByString: " "
         //if ack[0] == success good
         	sender.enabled = true; //enable button
 		})
@@ -180,15 +183,10 @@ class menuScreen: UIViewController{
                 //write to socket
                 self.mainApp.TCPStreamOut?.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length)
                 //read from socket
-                /*var resultBuffer:NSMutableData = NSMutableData(length: 1024)!
-                var bytesRead:Int = 0
-                bytesRead = self.mainApp.TCPStreamIn?.read(UnsafeMutablePointer<UInt8>(resultBuffer.mutableBytes), maxLength: 1024) as Int!
-                resultBuffer.length = bytesRead;
-                var result = NSString(data: resultBuffer, encoding: NSUTF8StringEncoding)!
-                print(result)*/
                	self.mainApp.ReadFromTCP()
                 //display resulting xml
-                
+                //var array: NSArray _n componentsSeparatedByString: " "
+                //pckt = RESULTS Size XML so the xml will be evertying after 2
                 sender.enabled = true;
             })
         }
