@@ -170,7 +170,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
     func ConnectUDP(){
     	//types required cfsockcreate(alloc, protofam, sock type, proto, callbacktypes, callout, context)
     	//readcallback is called when data is avaiable
-    	MasterUDP = CFSocketCreate(kCFAllocatorDefault, PF_INET, SOCK_DGRAM, IPPROTO_UDP, 0, nil, nil)
+    	MasterUDP = CFSocketCreate(kCFAllocatorDefault, 
+    								PF_INET, //protofam
+    								SOCK_DGRAM, //socktype
+    								IPPROTO_UDP, //protocal
+    								0, //callbacktypes
+    								nil, //callout
+    								nil) //context
     	if MasterUDP == nil{
     		print("Failed to create")
     		}
