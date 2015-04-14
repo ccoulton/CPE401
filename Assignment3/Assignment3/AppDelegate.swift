@@ -14,7 +14,8 @@ import Foundation
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
-
+	var MainIP: NSString?
+	var MainPort: Int8?
     var window: UIWindow?
     var LoginInfo: InputScreen?
     var TCPStreamIn: NSInputStream?

@@ -63,15 +63,10 @@ class GetReginfo: UIViewController{
     @IBAction func Register(sender:UIButton){
 		sender.enabled = false;    
 		dispatch_async(dispatch_get_main_queue(), { () -> Void in
-		    var temp: NSString
-		    temp = "REGISTER "
-		    var buffer: NSString
-		    buffer = temp.stringByAppendingString(self.mainApp.UserName! as String) //add user name
-		    buffer = buffer.stringByAppendingString(" ")  //add a space
-		    //wait till registar button returns
-		    buffer = buffer.stringByAppendingString(self.FName.text as String)  //add first name to string
-		    buffer = buffer.stringByAppendingString(" ")
-		    buffer = buffer.stringByAppendingString(self.LName.text as String)  //add last name to string
+		    var temp: NSString = NSString(format: "%@%@%@%@%@%@", 
+		    						"REGISTER ", self.mainApp.UserName!
+		    						, " ", self.FName.text
+		    						, " ", self.LName.text)
 		    let data: NSData = buffer.dataUsingEncoding(NSUTF8StringEncoding)!
 		    self.mainApp.TCPStreamOut?.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length)
 		    //read from tcpstreamin
@@ -105,21 +100,20 @@ class menuScreen: UIViewController{
     @IBAction func Login(sender: UIButton) {
 		sender.enabled = false;  //disable button  
 		dispatch_async(dispatch_get_main_queue(), { () -> Void in
-			var temp: NSString
-			temp = "LOGIN "
-			var buffer: NSString
-			buffer = temp.stringByAppendingString(self.mainApp.UserName! as String)
-			let data: NSData = buffer.dataUsingEncoding(NSUTF8StringEncoding)!
+			var temp: NSString = NSString(format: "%@%@", "LOGIN ", self.mainApp.UserName!)
+			let data: NSData = temp.dataUsingEncoding(NSUTF8StringEncoding)!
 			//write to socket
 			self.mainApp.TCPStreamOut?.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length)
 			//get ack from tpc socket
 		   	var ack: NSString = self.mainApp.ReadFromTCP()
 		   	//split ack into ack username ip, and port to set up udp
-		   	//var array: NSArray _n componentsSeparatedByString: " "
+		   	var SplitAck: NSArray = ack.componentsSeparatedByString(" ")
+			//ack username ip port
+			self.mainApp.MainIP = SplitAck[2] as! String
+			self.mainApp.MainPort = SplitAck[3].toInt()
 			//open master UDP socket
 			//make list of peers and set up ports for each
 			//send HI message to Peers
-			//check that the message whent though
 			sender.enabled = true; //enable button
 		})
     }
@@ -135,35 +129,38 @@ class menuScreen: UIViewController{
 		    //set to nil to close it out
 		    self.mainApp.TCPStreamIn?.delegate = nil
 		    //send out quit message to server
-		    var temp: NSString
-		    temp = "QUIT "
-		    temp = temp.stringByAppendingString(self.mainApp.UserName! as String)
+		    var temp: NSString = NSString(format: "%@%@", "QUIT ", self.mainApp.UserName!)
 		    let data: NSData = temp.dataUsingEncoding(NSUTF8StringEncoding)!
 		    self.mainApp.TCPStreamOut?.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length)
 		    //close output stream and clean up after self
 		    self.mainApp.TCPStreamOut?.close()
 		    self.mainApp.TCPStreamOut?.removeFromRunLoop((NSRunLoop.currentRunLoop()), forMode: NSDefaultRunLoopMode)
 		    self.mainApp.TCPStreamOut?.delegate = nil
-			sender.enabled = true; //enable button
-		})
         //close UDP sockets
         //close master UDP socket
+        	sender.enabled = true; //enable button
+		})
     }
     
     @IBAction func Update(sender:UIButton){
     	sender.enabled = false;    
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
-        //ask for xml file
-        //put in "UPDATE "
-        //append xml file to string
-        //check for bytes avaiable
-        //send on socket
-        //check that the file has been sent
-        //read on socket for success
-        //var ack: NSStream = self.mainApp.ReadFromTCP()
-        //ack.split()
-        //var array: NSArray _n componentsSeparatedByString: " "
-        //if ack[0] == success good
+		    //ask for xml file
+		    //put in "UPDATE ", file size, xml
+		    var temp: NSString = NSString(format: "%@", "UPDATE "/*, XMLfile*/)
+		    //check for bytes avaiable
+		    //send on socket
+		    let data: NSData = temp.dataUsingEncoding(NSUTF8StringEncoding)!
+		    self.mainApp.TCPStreamOut?.write(UnsafePointer<UInt8>(data.bytes), 
+		    											maxLength: data.length)
+		    //check that the file has been sent
+		    //read on socket for success
+		    var ack: NSString = self.mainApp.ReadFromTCP()
+		    var result: NSArray = ack.componentsSeperatedByString(" ")//ack.split()
+		    /*if result[0] == "SUCESS"{ // good
+		    }else{
+		    	//bad?
+		    }*/
         	sender.enabled = true; //enable button
 		})
     }
@@ -184,9 +181,9 @@ class menuScreen: UIViewController{
                 //read from socket
                	var Result: NSString = self.mainApp.ReadFromTCP()
                 //display resulting xml
-                var Result_Array: NSArray =  Result.componentsSeparatedByString(" ")
+                var Result_Array: NSArray = Result.componentsSeparatedByString(" ")
                 //pckt = RESULTS Size XML so the xml will be evertying after 2
-                print(Result_Array[1])
+             	//parse xml into dictonary 
                 sender.enabled = true;
             })
         }
@@ -197,14 +194,11 @@ class menuScreen: UIViewController{
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
         //create new view controller
         //ask for which peer to talk to
-        	var temp: NSString = NSString(format: "%@%@%@", "CHAT ", self.mainApp.UserName!, " ")
+        	var temp: NSString = NSString(format: "%@%@%@", "CHAT ", self.mainApp.UserName!, " "/*, chatStream*/)
         	//get peer's master udp and chat stream
-        	//temp = temp.stringByAppendingString(chat stream)
         	let data: NSData = temp.dataUsingEncoding(NSUTF8StringEncoding)!
         	//send to udpsocket
         	//self.mainApp.peersudp.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length) //send to peerudp
-        	//UDP chat will handle incoming  
-        //send "chat
         	sender.enabled = true; //enable button
 		})
     }
@@ -214,7 +208,7 @@ class menuScreen: UIViewController{
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
         //ask user for friendship
         	var temp: NSString = NSString(format: "%@%@", "FRIEND ", self.mainApp.UserName!)
-        //write "FRIEND "+UserName
+        	let data: NSData = temp.dataUsingEncoding(NSUTF8StringEncoding)!
         //peer sends back REJECT or ACCEPT out if accept get new udp socket for that peer
         //if reject don't make a new udp peer
         //let master UDP socket handle response
@@ -225,9 +219,8 @@ class menuScreen: UIViewController{
     @IBAction func Post(sender: UIButton){
     	sender.enabled = false;    
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
-        	var temp: NSString = NSString(format: "%@%@%@", "POST ", self.mainApp.UserName!, " ")
+        	var temp: NSString = NSString(format: "%@%@%@", "POST ", self.mainApp.UserName!, " "/*, XMLfile*/)
         //push content as xml file marked for friends
-       	//temp = temp.appendWithString(NSString(format: "%@%@%@" xml file length, " ", xml file)
         //friends of friends or public
         //if public send to server to update profile
             //and online friends, who flood it to all
@@ -244,8 +237,7 @@ class menuScreen: UIViewController{
     @IBAction func Entries(sender: UIButton){
     	sender.enabled = false;    
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
-        	var temp: NSString = NSString(format: "%@%@%@", "ENTRIES ", self.mainApp.UserName!, " ")
-        	//temp = temp.appendwithstring(timestamp)
+        	var temp: NSString = NSString(format: "%@%@%@", "ENTRIES ", self.mainApp.UserName!, " "/*, timestamp*/)
         //get all wall posts since time in reverse 
         //chronological order
         	sender.enabled = true; //enable button
