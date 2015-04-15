@@ -9,221 +9,6 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Assignment3/ViewController.swift"
-            timestampString = "450213337.025233"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "38"
-            endingLineNumber = "38"
-            landmarkName = "Host_connect(_:)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Assignment3/ViewController.swift"
-            timestampString = "450203064.441225"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "11"
-            endingLineNumber = "11">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Assignment3.InputScreen.Host_Port.getter : weak Swift.ImplicitlyUnwrappedOptional&lt;ObjectiveC.UITextField&gt;"
-                  moduleName = "Assignment3"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ccoulton/CPE401/Assignment3/Assignment3/ViewController.swift"
-                  timestampString = "450209612.108097"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0"
-                  offsetFromSymbolStart = "12">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Assignment3.InputScreen.Host_Port.setter : weak Swift.ImplicitlyUnwrappedOptional&lt;ObjectiveC.UITextField&gt;"
-                  moduleName = "Assignment3"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ccoulton/CPE401/Assignment3/Assignment3/ViewController.swift"
-                  timestampString = "450209612.108315"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0"
-                  offsetFromSymbolStart = "16">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Assignment3.InputScreen.Host_Port.materializeForSet : weak Swift.ImplicitlyUnwrappedOptional&lt;ObjectiveC.UITextField&gt;"
-                  moduleName = "Assignment3"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ccoulton/CPE401/Assignment3/Assignment3/ViewController.swift"
-                  timestampString = "450209612.108469"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0"
-                  offsetFromSymbolStart = "16">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Assignment3.InputScreen.init (Assignment3.InputScreen.Type)(nibName : Swift.Optional&lt;Swift.String&gt;, bundle : Swift.Optional&lt;ObjectiveC.NSBundle&gt;) -&gt; Assignment3.InputScreen"
-                  moduleName = "Assignment3"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ccoulton/CPE401/Assignment3/Assignment3/ViewController.swift"
-                  timestampString = "450209612.108609"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "15"
-                  endingLineNumber = "15"
-                  offsetFromSymbolStart = "53">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Assignment3.InputScreen.init (Assignment3.InputScreen.Type)() -&gt; Assignment3.InputScreen"
-                  moduleName = "Assignment3"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ccoulton/CPE401/Assignment3/Assignment3/ViewController.swift"
-                  timestampString = "450209612.108744"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "15"
-                  endingLineNumber = "15"
-                  offsetFromSymbolStart = "24">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Assignment3.InputScreen.init (Assignment3.InputScreen.Type)(coder : ObjectiveC.NSCoder) -&gt; Assignment3.InputScreen"
-                  moduleName = "Assignment3"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ccoulton/CPE401/Assignment3/Assignment3/ViewController.swift"
-                  timestampString = "450209612.108876"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "15"
-                  endingLineNumber = "15"
-                  offsetFromSymbolStart = "31">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Assignment3/ViewController.swift"
-            timestampString = "450205352.525077"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "13"
-            endingLineNumber = "13"
-            landmarkName = "InputScreen"
-            landmarkType = "3">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Assignment3.InputScreen.Host_Port.getter : weak Swift.ImplicitlyUnwrappedOptional&lt;ObjectiveC.UITextField&gt;"
-                  moduleName = "Assignment3"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ccoulton/CPE401/Assignment3/Assignment3/ViewController.swift"
-                  timestampString = "450209572.265959"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0"
-                  offsetFromSymbolStart = "12">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Assignment3.InputScreen.Host_Port.materializeForSet : weak Swift.ImplicitlyUnwrappedOptional&lt;ObjectiveC.UITextField&gt;"
-                  moduleName = "Assignment3"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ccoulton/CPE401/Assignment3/Assignment3/ViewController.swift"
-                  timestampString = "450209572.266527"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0"
-                  offsetFromSymbolStart = "16">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Assignment3.InputScreen.init (Assignment3.InputScreen.Type)(nibName : Swift.Optional&lt;Swift.String&gt;, bundle : Swift.Optional&lt;ObjectiveC.NSBundle&gt;) -&gt; Assignment3.InputScreen"
-                  moduleName = "Assignment3"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ccoulton/CPE401/Assignment3/Assignment3/ViewController.swift"
-                  timestampString = "450209572.266766"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "15"
-                  endingLineNumber = "15"
-                  offsetFromSymbolStart = "53">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Assignment3.InputScreen.init (Assignment3.InputScreen.Type)() -&gt; Assignment3.InputScreen"
-                  moduleName = "Assignment3"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ccoulton/CPE401/Assignment3/Assignment3/ViewController.swift"
-                  timestampString = "450209572.267004"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "15"
-                  endingLineNumber = "15"
-                  offsetFromSymbolStart = "24">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Assignment3.InputScreen.init (Assignment3.InputScreen.Type)(coder : ObjectiveC.NSCoder) -&gt; Assignment3.InputScreen"
-                  moduleName = "Assignment3"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/ccoulton/CPE401/Assignment3/Assignment3/ViewController.swift"
-                  timestampString = "450209572.267219"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "15"
-                  endingLineNumber = "15"
-                  offsetFromSymbolStart = "31">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "Assignment3/AppDelegate.swift"
             timestampString = "450642652.672521"
             startingColumnNumber = "9223372036854775807"
@@ -254,22 +39,6 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Assignment3/ViewController.swift"
-            timestampString = "450209262.833585"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "33"
-            endingLineNumber = "33"
-            landmarkName = "Host_connect(_:)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Assignment3/AppDelegate.swift"
@@ -305,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Assignment3/ViewController.swift"
-            timestampString = "450400247.60907"
+            timestampString = "450815150.991532"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "154"
-            endingLineNumber = "154"
+            startingLineNumber = "156"
+            endingLineNumber = "156"
             landmarkName = "Update(_:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -322,6 +91,86 @@
             continueAfterRunningActions = "No"
             scope = "0"
             stopOnStyle = "0">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Assignment3/ViewController.swift"
+            timestampString = "450815150.991532"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "120"
+            endingLineNumber = "120"
+            landmarkName = "Login(_:)"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Assignment3.menuScreen.Login (Assignment3.menuScreen)(ObjectiveC.UIButton) -&gt; ()"
+                  moduleName = "Assignment3"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ccoulton/CPE401/Assignment3/Assignment3/ViewController.swift"
+                  timestampString = "450808924.218287"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "119"
+                  endingLineNumber = "119"
+                  offsetFromSymbolStart = "341">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Assignment3.menuScreen.(Login (Assignment3.menuScreen) -&gt; (ObjectiveC.UIButton) -&gt; ()).(closure #1)"
+                  moduleName = "Assignment3"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/ccoulton/CPE401/Assignment3/Assignment3/ViewController.swift"
+                  timestampString = "450808924.218469"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "119"
+                  endingLineNumber = "119"
+                  offsetFromSymbolStart = "1925">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Assignment3/ViewController.swift"
+            timestampString = "450815150.991532"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "118"
+            endingLineNumber = "118"
+            landmarkName = "Login(_:)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Assignment3/ViewController.swift"
+            timestampString = "450815062.324347"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "113"
+            endingLineNumber = "113"
+            landmarkName = "Login(_:)"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

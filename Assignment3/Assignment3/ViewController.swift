@@ -67,7 +67,7 @@ class GetReginfo: UIViewController{
 		    						"REGISTER ", self.mainApp.UserName!
 		    						, " ", self.FName.text
 		    						, " ", self.LName.text)
-		    let data: NSData = buffer.dataUsingEncoding(NSUTF8StringEncoding)!
+		    let data: NSData = temp.dataUsingEncoding(NSUTF8StringEncoding)!
 		    self.mainApp.TCPStreamOut?.write(UnsafePointer<UInt8>(data.bytes), maxLength: data.length)
 		    //read from tcpstreamin
 		    //check for ack package
@@ -109,9 +109,11 @@ class menuScreen: UIViewController{
 		   	//split ack into ack username ip, and port to set up udp
 		   	var SplitAck: NSArray = ack.componentsSeparatedByString(" ")
 			//ack username ip port
-			self.mainApp.MainIP = SplitAck[2] as! String
-			self.mainApp.MainPort = SplitAck[3].toInt()
-			//open master UDP socket
+			self.mainApp.MainIP = (SplitAck[2] as! NSString)
+            var tempPort: NSString = SplitAck[3] as! NSString
+            self.mainApp.MainPort = tempPort.intValue
+            //open master UDP socket
+            self.mainApp.ConnectUDP()
 			//make list of peers and set up ports for each
 			//send HI message to Peers
 			sender.enabled = true; //enable button
@@ -155,8 +157,8 @@ class menuScreen: UIViewController{
 		    											maxLength: data.length)
 		    //check that the file has been sent
 		    //read on socket for success
-		    var ack: NSString = self.mainApp.ReadFromTCP()
-		    var result: NSArray = ack.componentsSeperatedByString(" ")//ack.split()
+		    //var ack: NSString = self.mainApp.ReadFromTCP()
+		    //var result: NSArray = ack.componentsSeparatedByString(" ")//ack.split()
 		    /*if result[0] == "SUCESS"{ // good
 		    }else{
 		    	//bad?

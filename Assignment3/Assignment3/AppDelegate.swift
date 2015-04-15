@@ -15,7 +15,7 @@ import Foundation
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
 	var MainIP: NSString?
-	var MainPort: Int8?
+	var MainPort: Int32?
     var window: UIWindow?
     var LoginInfo: InputScreen?
     var TCPStreamIn: NSInputStream?
@@ -168,33 +168,41 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
     }
     
     func ConnectUDP(){
+        //from stackoverflow mostly...
+        var addr = sockaddr_in()
+        memset(&addr, 0, sizeof(sockaddr_in))
+        addr.sin_len = UInt8(sizeof(sockaddr_in))
+        addr.sin_family = UInt8(AF_INET)
+        addr.sin_port = UInt16(self.MainPort!)
+        inet_aton(String(self.MainIP!), &addr.sin_addr)
+        
+        var MasterAddr: NSData = NSData(bytes: &addr, length: Int(addr.sin_len))
+        var MasterUDPSig: CFSocketSignature = CFSocketSignature(PF_INET, SOCK_DGRAM, IPPROTO_UDP, MasterAddr)
+        self.MasterUDP = CFSocketCreateWithSocketSignature(kCFAllocatorDefault, MasterUDPSig, 0, nil, nil)
     	//types required cfsockcreate(alloc, protofam, sock type, proto, callbacktypes, callout, context)
     	//readcallback is called when data is avaiable
-    	MasterUDP = CFSocketCreate(kCFAllocatorDefault, 
+    	/*self.MasterUDP = CFSocketCreate(kCFAllocatorDefault,
     								PF_INET, //protofam
     								SOCK_DGRAM, //socktype
     								IPPROTO_UDP, //protocal
     								0, //callbacktypes
     								nil, //callout
-    								nil) //context
+    								nil) //context*/
     	if MasterUDP == nil{
     		print("Failed to create")
     		}
     	else{
-    		/* from stackoverflow
-    		struct sockaddr_in addr;
-    		memset(&addr, 0 sizeof(addr))
-    		addr.sin_len = sizeof(addr)
-    		addr.sin_family = AF_INET
-    		addr.sin_port = htons(9)
-    		inet_aton(0.0.0.0, &addr.sin_addr)*/
-    		//				  cfsocekt cfdata, cfdata, ?
-    		//CFSocketSendData(socket, address, data, ?)
-    		//masterUDP.delegate = udplistener
+            //CFSocketSetAddress(self.MasterUDP, MasterAddr)
+    		//				  cfsocekt cfdata, cfdata, timeout len
+            //CFSocketSendData(self.MasterUDP, MasterAddr, Data, 10)
+    		//self.MasterUDP.delegate = self
     		}
     		
     }
-    
+    //func stream(aStream: NSStream, handleEvent eventCode: NSStreamEvent) {
+    func UDPListener(){
+        print("I HEAR UDP SIGNALS")
+    }
     //make master udp listener delegate
         //read check udp status
         //if bytes avaiable
