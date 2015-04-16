@@ -163,11 +163,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
         bytesRead = self.TCPStreamIn?.read(UnsafeMutablePointer<UInt8>(resultBuffer.mutableBytes), maxLength: 1024) as Int!
         resultBuffer.length = bytesRead;
         var result = NSString(data: resultBuffer, encoding: NSUTF8StringEncoding)!
-        //print(result)
         return result
     }
+    /*
+    func sockaddr_cast(p: ConstUnsafePointer<sockaddr_in>) -> ConstUnsafePointer<sockaddr> {
+        return ConstUnsafePointer<sockaddr>(p)
+    }*/
     
     func ConnectUDP(){
+        var status: Int32 = 0
+        var addrHint = addrinfo(
+            ai_flags: AI_PASSIVE,
+            ai_family: AF_INET,
+            ai_socktype: SOCK_DGRAM,
+            ai_protocol: 0,
+            ai_addrlen: 0,
+            ai_canonname: nil,
+            ai_addr: nil,
+            ai_next: nil)
+        
+        var serverinfo = UnsafeMutablePointer<addrinfo>(nil)
+        
+        //status = getaddrinfo(UnsafePointer<Int8>(nil), (UnsafePointer<Int32>(self.MainPort) as! UnsafePointer<Int8>), &addrHint, &serverinfo)
+        if status != 0 {return}
+        /*if ap_applicationInDebugMode{
+            for (var info = severinfo; info != nil; info = info.memory.ai_next){
+                
+            }
+        }*/
+        /*
         //from stackoverflow mostly...
         var addr = sockaddr_in()
         memset(&addr, 0, sizeof(sockaddr_in))
@@ -175,19 +199,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
         addr.sin_family = UInt8(AF_INET)
         addr.sin_port = UInt16(self.MainPort!)
         inet_aton(String(self.MainIP!), &addr.sin_addr)
-        
         var MasterAddr: NSData = NSData(bytes: &addr, length: Int(addr.sin_len))
-        var MasterUDPSig: CFSocketSignature = CFSocketSignature(PF_INET, SOCK_DGRAM, IPPROTO_UDP, MasterAddr)
-        self.MasterUDP = CFSocketCreateWithSocketSignature(kCFAllocatorDefault, MasterUDPSig, 0, nil, nil)
-    	//types required cfsockcreate(alloc, protofam, sock type, proto, callbacktypes, callout, context)
+        
+        var sock:CInt = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
+        //var err = bind(sock, self.sockaddr_cast(&addr), addr.sin_len)
+        //CFSocketSignature(protocolFamily: <#Int32#>, socketType: <#Int32#>, protocol: <#Int32#>, address: )
+        /*var _test: Unmanaged<CFDataRef>? = nil;
+        _test = MasterAddr as! CFDataRef
+        var MasterUDPSig: CFSocketSignature = CFSocketSignature()
+        MasterUDPSig.protocolFamily = PF_INET
+        MasterUDPSig.socketType = SOCK_DGRAM
+        MasterUDPSig.address = MasterAddr  //CFDataCreate(nil, UnsafePointer<UInt8>(MasterAddr.bytes), MasterAddr.length)
+
+        self.MasterUDP = CFSocketCreateWithSocketSignature(kCFAllocatorDefault, &MasterUDPSig, 0, nil, nil)*/
+    	
+        //types required cfsockcreate(alloc, protofam, sock type, proto, callbacktypes, callout, context)
     	//readcallback is called when data is avaiable
-    	/*self.MasterUDP = CFSocketCreate(kCFAllocatorDefault,
-    								PF_INET, //protofam
-    								SOCK_DGRAM, //socktype
-    								IPPROTO_UDP, //protocal
-    								0, //callbacktypes
-    								nil, //callout
-    								nil) //context*/
+    	self.MasterUDP = CFSocketCreateWithNative(kCFAllocatorDefault, sock, 0, nil, nil)
     	if MasterUDP == nil{
     		print("Failed to create")
     		}
@@ -196,7 +224,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
     		//				  cfsocekt cfdata, cfdata, timeout len
             //CFSocketSendData(self.MasterUDP, MasterAddr, Data, 10)
     		//self.MasterUDP.delegate = self
-    		}
+    		}*/
     		
     }
     //func stream(aStream: NSStream, handleEvent eventCode: NSStreamEvent) {
