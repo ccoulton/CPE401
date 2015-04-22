@@ -5,6 +5,9 @@ from time import gmtime, strftime
 import os
 import re
 from threading import Thread
+import Crypto.Hash
+from Crypto.PublicKey import RSA
+from Crypto import Random
 
 class clientHandler(Thread):
     def __init__(self, socket, addr, users):
@@ -156,6 +159,12 @@ def initUsers():
     
 print "MaskTome v2.0 server script started"   
 print "press ctrl +c to quit gracefully."
+Random_Gen = Random.new().read
+keys = RSA.generate(1024, Random_Gen)
+#print(keys.size())
+#print(keys.can_encrypt())
+pubkey = keys.publickey()
+#print(pubkey.exportKey())
 users = initUsers()
 TCP = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 TCP.bind(('localhost', int(sys.argv[1])))
@@ -167,6 +176,7 @@ try:
     while True:
         sock, addr = TCP.accept()
         print "Connected to", addr
+        sock.send(pubkey.exportKey('OpenSSH'))
         Client = clientHandler(sock, addr, users)
         Client.start()
 except KeyboardInterrupt:

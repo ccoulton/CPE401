@@ -224,6 +224,7 @@ def Search(server):
 #sys.argv should be User ID/ServerIP/Server port
 choice = 'n'
 TCPsock = connectTCP()
+print(TCPsock.recv(1024))
 addr = TCPsock.getsockname()
 UDPsock = connectUDP(addr)
 UDPreciever = UDPconnectionlistener(UDPsock)
