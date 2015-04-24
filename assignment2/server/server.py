@@ -160,11 +160,11 @@ def initUsers():
 print "MaskTome v2.0 server script started"   
 print "press ctrl +c to quit gracefully."
 Random_Gen = Random.new().read
-keys = RSA.generate(1024, Random_Gen)
-#print(keys.size())
-#print(keys.can_encrypt())
+keys =  RSA.generate(1024, Random_Gen)
+alice = RSA.generate(1024, Random_Gen)
+bob =   RSA.generate(1024, Random_Gen)
+bobpub = bob.publickey()
 pubkey = keys.publickey()
-#print(pubkey.exportKey())
 users = initUsers()
 TCP = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 TCP.bind(('localhost', int(sys.argv[1])))
@@ -176,7 +176,7 @@ try:
     while True:
         sock, addr = TCP.accept()
         print "Connected to", addr
-        sock.send(pubkey.exportKey('OpenSSH'))
+        sock.send(pubkey.exportKey('DER'))
         Client = clientHandler(sock, addr, users)
         Client.start()
 except KeyboardInterrupt:
