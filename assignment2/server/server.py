@@ -8,6 +8,7 @@ from threading import Thread
 import Crypto.Hash
 from Crypto.PublicKey import RSA
 from Crypto import Random
+import base64
 
 Random_Gen = Random.new().read
 keys =  RSA.generate(1024, Random_Gen)
@@ -61,6 +62,7 @@ class clientHandler(Thread):
     def run(self):
         while True:
             data = self._sock.recv(1024)
+            print data
             data = self.decrypt(data)
             '''if (data == null):
                 print "hash failed"
@@ -190,7 +192,16 @@ print "press ctrl +c to quit gracefully."
 users = initUsers()
 TCP = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 pubkey = keys.publickey()
+xml = ''
+xmlfile = open('mgunes.xml', 'r')
+for line in xmlfile:
+    xml = xml + line
+b64str = base64.b64encode(xml)
+cipher = keys.encrypt(b64str, 0)
+
+
 TCP.bind(('localhost', int(sys.argv[1])))
+print "listening"
 TCP.listen(5)       
 #parse activty log, populate users list, 
 #should be started with a port number

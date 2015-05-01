@@ -156,8 +156,16 @@ def Update(server):
     size = profile.tell()        #size of file
     profile.close()              #close profile so we can start at the beginning
     profile = open(inputString, 'r')
-    string = "UPDATE "+repr(size)+' '+profile.read(size)
-    server.sendall(encrypt(string))
+    foo = profile.read(size)
+    string = "UPDATE "+1023+' '
+    for (size + len(string)) in range(0,1023):
+        foo+'X'
+    string = string +foo
+    print "key size"+ repr(keys.size())
+    print "string size" +repr(size)
+    print len(string)
+    print encrypt(string)
+    server.send(encrypt(string))
     data = decrypt(server.recv(1024))
     print data
     return
