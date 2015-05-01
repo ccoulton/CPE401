@@ -4,6 +4,10 @@ import string
 import os
 import threading
 import time
+from Crypto.PublicKey import RSA
+from Crypto import Random
+import Crypto.Hash
+from Crypto.Cipher import PKCS1_v1_5
 
 username = sys.argv[1]
 host = sys.argv[2]
@@ -112,7 +116,16 @@ class UDPHandler(threading.Thread):
         
     def Post(self):
         pass
-        
+def encrypt(inString):
+    cipher = keys.decrypt(inString)
+    cipher = serverpub.encrypt(cipher,0)
+    return ''.join(cipher)
+
+def decrypt(inString):
+    cipher = keys.decrypt(inString)
+    cipher = serverpub.encrypt(cipher,0)
+    return ''.join(cipher)
+
 def connectTCP():
     TCPsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     TCPsock.connect((host, host_port))
@@ -128,8 +141,8 @@ def connectUDP(address):
 #login function
 def Login(server):
     string = "LOGIN " + username
-    server.send(string)
-    data = server.recv(1024)
+    server.send(encrypt(string))
+    data = decrypt(server.recv(1024))
     print "got msg ", data, "from server"
     info = data.split(' ') #ack username ip port
     #return(server.getpeername())
@@ -144,8 +157,8 @@ def Update(server):
     profile.close()              #close profile so we can start at the beginning
     profile = open(inputString, 'r')
     string = "UPDATE "+repr(size)+' '+profile.read(size)
-    server.sendall(string)
-    data = server.recv(1024)
+    server.sendall(encrypt(string))
+    data = decrypt(server.recv(1024))
     print data
     return
     
@@ -224,7 +237,16 @@ def Search(server):
 #sys.argv should be User ID/ServerIP/Server port
 choice = 'n'
 TCPsock = connectTCP()
-print(TCPsock.recv(1024))
+
+#recieve key create keys and return encrypted key
+serverkeystring = TCPsock.recv(1024) #get key
+serverpub = RSA.importKey(serverkeystring) #import it into an RSA object
+
+generator = Random.new().read #gen new randomnum 
+keys = RSA.generate(1024, generator) #create keys
+pubkey = keys.publickey() #get our pubkey
+TCPsock.send(pubkey.exportKey('OpenSSH'))
+#start UDP listener
 addr = TCPsock.getsockname()
 UDPsock = connectUDP(addr)
 UDPreciever = UDPconnectionlistener(UDPsock)

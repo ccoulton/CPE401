@@ -9,6 +9,9 @@ import Crypto.Hash
 from Crypto.PublicKey import RSA
 from Crypto import Random
 
+Random_Gen = Random.new().read
+keys =  RSA.generate(1024, Random_Gen)
+
 class clientHandler(Thread):
     def __init__(self, socket, addr, users):
         Thread.__init__(self, name = "ClientHndlr")
@@ -16,6 +19,9 @@ class clientHandler(Thread):
         self._addr = addr
         self._userList = users
         self._userindex = -1
+        cipher = socket.recv(1024)
+        self._key = RSA.importKey(cipher)
+        
         
     def printUsers(self):
         for user in self._userList:
@@ -37,10 +43,29 @@ class clientHandler(Thread):
         userFile.write(name+'\n')
         userFile.close()
         #release lock
-         
+
+    def decrypt(self, data): #serverpub(sendpriv(m))
+        string = keys.decrypt(data)  #use private key on message
+        string = ''.join(self._key.encrypt(string,0)) #use public key
+        return string
+        #string.split(' ')
+        #if splitstring[-1] == Hash.MD5(string - hash)
+        #return string - hash
+        #else return null
+
+    def encrypt(self, data):
+        cipher = keys.decrypt(data)
+        cipher = self._key.encrypt(cipher,0)
+        return ''.join(cipher)
+    
     def run(self):
         while True:
             data = self._sock.recv(1024)
+            data = self.decrypt(data)
+            '''if (data == null):
+                print "hash failed"
+            else:
+                print "do stuff"'''
             print data
             #ask for lock on activity.log
             #append to activity.log
@@ -62,11 +87,12 @@ class clientHandler(Thread):
                     #get lock
                     self._userList[userindex][1] = True       #flag user as online
                     self._userList[userindex][2] = self._addr #log user in record IP
+                    self._userList[userindex][3] = self._key
                     #release lock
                     #self.printUsers()
                     self._userindex = userindex
                     print self._sock.getpeername()
-                    self._sock.send("ACK "+sdata[1]+ " "+self._addr[0]+" "+repr(self._addr[1]))
+                    self._sock.send(self.encrypt("ACK "+sdata[1]+ " "+self._addr[0]+" "+repr(self._addr[1])))
                 else:
                     self._sock.send("ERR "+sdata[1]+" Try registering")
                     #aqqurie lock on error.log
@@ -153,20 +179,16 @@ def initUsers():
     usersList = []
     for line in usersFile:
         line = line.replace('\n','')
-        usersList.append([line, False, [' ', 0]])
+        
+        usersList.append([line, False, [' ', 0], RSA._RSAobj])
     usersFile.close()
     return(usersList)
     
 print "MaskTome v2.0 server script started"   
 print "press ctrl +c to quit gracefully."
-Random_Gen = Random.new().read
-keys =  RSA.generate(1024, Random_Gen)
-alice = RSA.generate(1024, Random_Gen)
-bob =   RSA.generate(1024, Random_Gen)
-bobpub = bob.publickey()
-pubkey = keys.publickey()
 users = initUsers()
 TCP = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+pubkey = keys.publickey()
 TCP.bind(('localhost', int(sys.argv[1])))
 TCP.listen(5)       
 #parse activty log, populate users list, 
@@ -176,7 +198,7 @@ try:
     while True:
         sock, addr = TCP.accept()
         print "Connected to", addr
-        sock.send(pubkey.exportKey('DER'))
+        sock.send(pubkey.exportKey('OpenSSH'))
         Client = clientHandler(sock, addr, users)
         Client.start()
 except KeyboardInterrupt:
