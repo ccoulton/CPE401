@@ -164,8 +164,8 @@ def Update(server):
     
 def Quit(server):
     string = "QUIT " +username
-    server.send(string)
-    data = server.recv(1024)
+    server.send(encrypt(string))
+    data = decrypt(server.recv(1024))
     data = data.split(' ')
     if data[0] == "ACK":
         print username, " logged out shuting connection"
@@ -182,8 +182,8 @@ def Register(server):
     input_string = raw_input('Enter your first and last name seperated by space: ')
     firstlast = input_string.split(' ')
     string = "REGISTER " + username + " " + firstlast[0] + " " + firstlast[1]
-    server.send(string)
-    data = server.recv(1024)
+    server.send(encrypt(string))
+    data = decrypt(server.recv(1024))
     print "got msg", data, "from server"
     
 def Chat(server): #in the slides from class modified probly....
@@ -215,9 +215,9 @@ def UDPConnecttest(UDP):
     
 def Search(server):
     keyword = raw_input("please enter a keyword to search on all profiles: ")
-    server.send("SEARCH "+keyword)
+    server.send(encrypt("SEARCH "+keyword))
     results = open("results"+keyword+".xml", 'a')
-    data = server.recv(1024)
+    data = decrypt(server.recv(1024))
     print data
     data = data.split(' ', 2)
     written = 0
@@ -231,7 +231,7 @@ def Search(server):
             results.write(xmldata)
             written = written + 1024
             if written < size:
-                xmldata = server.recv(1024)
+                xmldata = decrypt(server.recv(1024))
         
 #sys.argv is filename, arg1, .... , argn
 #sys.argv should be User ID/ServerIP/Server port

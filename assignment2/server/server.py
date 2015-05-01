@@ -73,7 +73,6 @@ class clientHandler(Thread):
             
             if sdata[0].find('REGISTER') != -1:
                 outstr = "ACK "+sdata[1]+" "+self._addr[0]+" "+repr(self._addr[1])
-                self._sock.send(outstr)
                 if self.checkUsers(sdata[1]) != -1:
                     print "found user ", sdata[1]
                 else:
@@ -92,9 +91,9 @@ class clientHandler(Thread):
                     #self.printUsers()
                     self._userindex = userindex
                     print self._sock.getpeername()
-                    self._sock.send(self.encrypt("ACK "+sdata[1]+ " "+self._addr[0]+" "+repr(self._addr[1])))
+                    outstr = "ACK "+sdata[1]+ " "+self._addr[0]+" "+repr(self._addr[1])
                 else:
-                    self._sock.send("ERR "+sdata[1]+" Try registering")
+                    outstr = "ERR "+sdata[1]+" Try registering"
                     #aqqurie lock on error.log
                     #record error
                     #release error.log
@@ -103,12 +102,13 @@ class clientHandler(Thread):
                 #check if user ip matches on file
                 pcktaddr = self._sock.getpeername()
                 if sdata[1] == self._userList[self._userindex][0] and pcktaddr == self._userList[self._userindex][2]:
-                        self._sock.send("ACK "+sdata[1])
+                        self._sock.send(self.encrypt("ACK "+sdata[1]))
                         self._sock.shutdown(socket.SHUT_RDWR)
                         self._sock.close()
                         #get lock
                         self._userList[self._userindex][1] = False
                         self._userList[self._userindex][2] = [ ' ', 0]
+                        return
                         #release lock
                 else:
                     self._sock.send("ERR "+sdata[1]+" not logged out")
@@ -131,7 +131,7 @@ class clientHandler(Thread):
                         break
                 profile.close()         #close 
                 #release lock    
-                self._sock.send("SUCCESS "+strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime()))
+                outstr = "SUCCESS "+strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime())
                 #self._socket.send("SUCCESS"+timestamp)'''
                 
             elif sdata[0].find('SEARCH') != -1:
@@ -166,13 +166,14 @@ class clientHandler(Thread):
                 size = results.tell()
                 results.close()
                 results = open('SResult.xml', 'r') #probly need to create new file/unquie
-                output ="RESULTS "+repr(size)+" "
+                outstr ="RESULTS "+repr(size)+" "
                 for line in results:
-                    output = output + line
+                    outstr = outstr + line
                 results.close()
-                self._sock.sendall(output)
                 os.remove('SResult.xml') #or just clean up the results file.
                 #Send whole file to the client.
+            if outstr.find('') != -1:
+                self._sock.sendall(self.encrypt(outstr))
         
 def initUsers():       
     usersFile = open('regusers.txt', 'r')
