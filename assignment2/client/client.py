@@ -6,7 +6,7 @@ import threading
 import time
 from Crypto.PublicKey import RSA
 from Crypto import Random
-import Crypto.Hash
+from Crypto.Hash import MD5
 from Crypto.Cipher import PKCS1_v1_5
 
 username = sys.argv[1]
@@ -116,15 +116,27 @@ class UDPHandler(threading.Thread):
         
     def Post(self):
         pass
+
 def encrypt(inString):
-    cipher = keys.decrypt(inString)
-    cipher = serverpub.encrypt(cipher,0)
-    return ''.join(cipher)
+	h = MD5.new()
+	h.update(inString)
+	print h.hexdigest()
+	cipher = keys.decrypt(inString+' '+h.hexdigest())
+	cipher = serverpub.encrypt(cipher,0)
+	print "end of encrypt client"
+	return ''.join(cipher)
 
 def decrypt(inString):
-    cipher = keys.decrypt(inString)
-    cipher = serverpub.encrypt(cipher,0)
-    return ''.join(cipher)
+	cipher = keys.decrypt(inString)
+	cipher = ''.join(serverpub.encrypt(cipher,0))
+	h = MD5.new()
+	splitstring = cipher.split(' ')
+	h.update(cipher[:-1])
+	print "checking if hash =="
+	if (hex(splitstring[-1]) == h.hexdigest()):
+		return ''.join(cipher[:-1])
+	else:
+		return ''
 
 def connectTCP():
     TCPsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -157,17 +169,10 @@ def Update(server):
     profile.close()              #close profile so we can start at the beginning
     profile = open(inputString, 'r')
     foo = profile.read(size)
-    string = "UPDATE "+1023+' '
-    for (size + len(string)) in range(0,1023):
-        foo+'X'
-    string = string +foo
-    print "key size"+ repr(keys.size())
-    print "string size" +repr(size)
-    print len(string)
-    print encrypt(string)
+    string = "UPDATE "+size+' '+foo
+    #need to split up the xml to sizeable chunks for the key peices < keys.n
     server.send(encrypt(string))
     data = decrypt(server.recv(1024))
-    print data
     return
     
 def Quit(server):

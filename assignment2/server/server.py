@@ -5,10 +5,9 @@ from time import gmtime, strftime
 import os
 import re
 from threading import Thread
-import Crypto.Hash
+from Crypto.Hash import MD5
 from Crypto.PublicKey import RSA
 from Crypto import Random
-import base64
 
 Random_Gen = Random.new().read
 keys =  RSA.generate(1024, Random_Gen)
@@ -46,28 +45,38 @@ class clientHandler(Thread):
         #release lock
 
     def decrypt(self, data): #serverpub(sendpriv(m))
-        string = keys.decrypt(data)  #use private key on message
-        string = ''.join(self._key.encrypt(string,0)) #use public key
-        return string
-        #string.split(' ')
-        #if splitstring[-1] == Hash.MD5(string - hash)
-        #return string - hash
-        #else return null
+		string = keys.decrypt(data)  #use private key on message
+		string = ''.join(self._key.encrypt(string,0)) #use public key
+		splitstring = string.split(' ')
+		msg = splitstring[:-1]
+		msgtocheck = ''
+		for parts in msg:
+			msgtocheck = msgtocheck + parts + ' '
+		print msgtocheck
+		h = MD5.new()
+		h.update(msgtocheck[:-1])
+		if h.hexdigest() == int(splitstring[-1], 16):
+			print "istrue"
+			return string
+		else:
+			return ''
 
     def encrypt(self, data):
-        cipher = keys.decrypt(data)
+    	h = MD5.new()
+    	h.update(data)
+        cipher = keys.decrypt(data+' '+repr(h.hexdigest()))
         cipher = self._key.encrypt(cipher,0)
         return ''.join(cipher)
     
     def run(self):
         while True:
             data = self._sock.recv(1024)
-            print data
+            #print data
             data = self.decrypt(data)
-            '''if (data == null):
+            if (data == ''):
                 print "hash failed"
             else:
-                print "do stuff"'''
+                print "do stuff"
             print data
             #ask for lock on activity.log
             #append to activity.log
@@ -137,6 +146,7 @@ class clientHandler(Thread):
                 #self._socket.send("SUCCESS"+timestamp)'''
                 
             elif sdata[0].find('SEARCH') != -1:
+            	#xmls need to be split to fit inside the encryption key's n
                 #search public profile information for keyword sdata[1]
                 results = open('SResult.xml', 'a')
                 for users in self._userList: #itterate over user list
@@ -192,14 +202,6 @@ print "press ctrl +c to quit gracefully."
 users = initUsers()
 TCP = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 pubkey = keys.publickey()
-xml = ''
-xmlfile = open('mgunes.xml', 'r')
-for line in xmlfile:
-    xml = xml + line
-b64str = base64.b64encode(xml)
-cipher = keys.encrypt(b64str, 0)
-
-
 TCP.bind(('localhost', int(sys.argv[1])))
 print "listening"
 TCP.listen(5)       
