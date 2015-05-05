@@ -9,6 +9,7 @@
 import UIKit
 import CoreData
 import Foundation
+import Security
 //import sys/socket
 //import netinet/in
 
@@ -23,6 +24,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
     var Menu: menuScreen?
     var UserName: NSString?
     var MasterUDP: CFSocket?
+    var serverPub: SecKeyRef?
+    var clientPub: SecKeyRef?
+    var clientPrv: SecKeyRef?
     //var Peerlist: CFSocket = CFSocket(length: 15)?
     //var master UDP socket
     //list of UDP peers with sockets.
@@ -169,6 +173,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, NSStreamDelegate {
     func sockaddr_cast(p: ConstUnsafePointer<sockaddr_in>) -> ConstUnsafePointer<sockaddr> {
         return ConstUnsafePointer<sockaddr>(p)
     }*/
+    func encryptString(inString: NSString, pubKey: SecKeyRef, privKey: SecKeyRef){// -> NSString{
+            //encrypt instring privkey if privkey == none is udp communcation session key
+            //encrypt instring pubkey
+            //return outstring
+    }
+    
+    //send user name to server that you want to connect to.
+    //if that user is online, server will return Kerberos type packets
+    //first packet is clientpub(serverpriv(user2ip, user2port, sessionkey)), second is user2pub(serverpriv(client, sessionkey))
+    //send second packet to the user2ip:port, then send a packet sessionkey(client)
+    //since these are the only packets that the udp master socket should be getting it can just set up sockets for these connections 
+    //creating a client name, ip:port and session key for each
     
     func ConnectUDP(){
         var status: Int32 = 0

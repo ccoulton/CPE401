@@ -120,23 +120,25 @@ class UDPHandler(threading.Thread):
 def encrypt(inString):
 	h = MD5.new()
 	h.update(inString)
-	print h.hexdigest()
+	#print h.hexdigest()
 	cipher = keys.decrypt(inString+' '+h.hexdigest())
 	cipher = serverpub.encrypt(cipher,0)
-	print "end of encrypt client"
 	return ''.join(cipher)
 
 def decrypt(inString):
 	cipher = keys.decrypt(inString)
 	cipher = ''.join(serverpub.encrypt(cipher,0))
-	h = MD5.new()
-	splitstring = cipher.split(' ')
-	h.update(cipher[:-1])
-	print "checking if hash =="
-	if (hex(splitstring[-1]) == h.hexdigest()):
-		return ''.join(cipher[:-1])
-	else:
-		return ''
+        print cipher
+        splitstring = cipher.split(' ')
+        msg = ''
+        for words in splitstring[:-1]:
+            msg = msg+ words + ' '
+        h = MD5.new()
+        h.update(msg[:-1])
+        if int(h.hexdigest(),16) == int(splitstring[-1],16):
+            return cipher
+        else:
+            return ''
 
 def connectTCP():
     TCPsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

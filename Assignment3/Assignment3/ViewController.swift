@@ -34,6 +34,11 @@ class InputScreen: UIViewController{
         //
         let mainApp = UIApplication.sharedApplication().delegate as! AppDelegate
         mainApp.TCPconnect(Host, host_Port: Port)
+        var serverPub: NSString = mainApp.ReadFromTCP()
+        NSLog(serverPub as String)
+        //split the key off of ssh-rsa 'key'
+        //create key encrypt with serverpub key
+        //mainApp.TCPStreamOut.write(client pub key, maxLength: data.length)
         mainApp.UserName = self.User_Name.text
     }
     

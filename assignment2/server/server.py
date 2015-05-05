@@ -48,15 +48,14 @@ class clientHandler(Thread):
 		string = keys.decrypt(data)  #use private key on message
 		string = ''.join(self._key.encrypt(string,0)) #use public key
 		splitstring = string.split(' ')
+                print string
 		msg = splitstring[:-1]
 		msgtocheck = ''
 		for parts in msg:
 			msgtocheck = msgtocheck + parts + ' '
-		print msgtocheck
 		h = MD5.new()
 		h.update(msgtocheck[:-1])
-		if h.hexdigest() == int(splitstring[-1], 16):
-			print "istrue"
+		if int(h.hexdigest(),16) == int(splitstring[-1], 16):
 			return string
 		else:
 			return ''
@@ -64,7 +63,8 @@ class clientHandler(Thread):
     def encrypt(self, data):
     	h = MD5.new()
     	h.update(data)
-        cipher = keys.decrypt(data+' '+repr(h.hexdigest()))
+        print data + h.hexdigest()
+        cipher = keys.decrypt(data+' '+h.hexdigest())
         cipher = self._key.encrypt(cipher,0)
         return ''.join(cipher)
     
@@ -75,9 +75,6 @@ class clientHandler(Thread):
             data = self.decrypt(data)
             if (data == ''):
                 print "hash failed"
-            else:
-                print "do stuff"
-            print data
             #ask for lock on activity.log
             #append to activity.log
             sdata = data.split(' ')
